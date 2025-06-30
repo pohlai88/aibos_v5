@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-BOS - Suppliers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold" style="background:#F9F9F9; color:#222; border-radius:0.5rem; padding:0.25rem 0.75rem;">AI-BOS</h1>
+                    <div class="ml-10 flex space-x-4">
+                        <a href="index.html" class="text-gray-500 hover:text-blue-600 px-3 py-2">Dashboard</a>
+                        <a href="customers.html" class="text-gray-500 hover:text-blue-600 px-3 py-2">Customers</a>
+                        <a href="#" class="text-blue-600 border-b-2 border-blue-600 px-3 py-2">Suppliers</a>
+                        <a href="organization.html" class="text-gray-500 hover:text-blue-600 px-3 py-2">Organization</a>
+                        <a href="users.html" class="text-gray-500 hover:text-blue-600 px-3 py-2">Users</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-900">Supplier Management</h2>
+            <p class="text-gray-600 mt-2">Manage supplier database and payment terms</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Total Suppliers</p>
+                        <p class="text-2xl font-bold">18</p>
+                    </div>
+                    <div class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-truck text-blue-600"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Active Suppliers</p>
+                        <p class="text-2xl font-bold">16</p>
+                    </div>
+                    <div class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-check text-green-600"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Outstanding AP</p>
+                        <p class="text-2xl font-bold">$25,000</p>
+                    </div>
+                    <div class="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-credit-card text-red-600"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Avg Payment Time</p>
+                        <p class="text-2xl font-bold">25 days</p>
+                    </div>
+                    <div class="h-12 w-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-calendar text-gray-600"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <div class="px-6 py-4 border-b">
+                <h3 class="text-lg font-semibold">Supplier Database</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Contact</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Balance</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4">
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900">Office Supplies Co</div>
+                                    <div class="text-sm text-gray-500">Jane Doe</div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div>
+                                    <div class="text-sm text-gray-900">jane.doe@officesupplies.com</div>
+                                    <div class="text-sm text-gray-500">+1 (555) 111-2222</div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">Office Supplies</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900">$1,200</div>
+                                    <div class="text-xs text-gray-500">NET 30</div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">Active</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

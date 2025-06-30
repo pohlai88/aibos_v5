@@ -1,0 +1,16 @@
+{
+  "name": "aibos_v5",
+  "version": "1.0.0",
+  "description": "Apple-inspired modular accounting SaaS with HTML, Tailwind CSS, and Supabase.",
+  "scripts": {
+    "dev": "npx tailwindcss -i ./src/styles/globals.css -o ./public/tailwind.css --watch",
+    "build": "npx tailwindcss -i ./src/styles/globals.css -o ./public/tailwind.css --minify",
+    "serve": "npx serve public"
+  },
+  "dependencies": {
+    "tailwindcss": "^3.4.1",
+    "postcss": "^8.4.24",
+    "autoprefixer": "^10.4.14",
+    "serve": "^14.2.0"
+  }
+}

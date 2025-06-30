@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIBOS Dashboard</title>
+  <link rel="stylesheet" href="tailwind.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-white text-gray-900 font-sans">
+  <nav class="flex items-center justify-between px-8 py-4 border-b border-gray-100">
+    <div class="text-2xl font-bold tracking-tight text-primary">AIBOS</div>
+    <ul class="flex gap-6 text-sm font-medium">
+      <li><a href="/dashboard.html" class="hover:text-primary">Dashboard</a></li>
+      <li><a href="/index.html#components" class="hover:text-primary">Components</a></li>
+      <li><a href="/index.html#login" class="hover:text-primary">Login</a></li>
+    </ul>
+    <button class="px-4 py-2 rounded-2xl bg-primary text-white font-medium shadow-sm hover:bg-primary/90 transition">Sign Up</button>
+  </nav>
+  <main class="max-w-5xl mx-auto py-12 px-4">
+    <h1 class="text-3xl font-bold mb-8">Dashboard</h1>
+    <!-- Stat Cards Row -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+      <div class="rounded-2xl shadow-sm border border-gray-100 p-6 bg-white">
+        <div class="text-sm text-gray-500 mb-2">Total Revenue</div>
+        <div id="stat-revenue" class="text-2xl font-bold text-primary">$0</div>
+      </div>
+      <div class="rounded-2xl shadow-sm border border-gray-100 p-6 bg-white">
+        <div class="text-sm text-gray-500 mb-2">Active Users</div>
+        <div id="stat-users" class="text-2xl font-bold text-primary">0</div>
+      </div>
+      <div class="rounded-2xl shadow-sm border border-gray-100 p-6 bg-white">
+        <div class="text-sm text-gray-500 mb-2">Transactions</div>
+        <div id="stat-transactions" class="text-2xl font-bold text-primary">0</div>
+      </div>
+      <div class="rounded-2xl shadow-sm border border-gray-100 p-6 bg-white">
+        <div class="text-sm text-gray-500 mb-2">Pending Approvals</div>
+        <div id="stat-approvals" class="text-2xl font-bold text-primary">0</div>
+      </div>
+    </div>
+    <!-- Chart.js Chart Area -->
+    <div class="mb-12">
+      <div class="rounded-2xl shadow-sm border border-gray-100 p-6 bg-white flex flex-col items-center justify-center">
+        <canvas id="dashboardChart" class="w-full max-w-xl h-64"></canvas>
+      </div>
+    </div>
+    <!-- Table Placeholder -->
+    <div class="mb-12">
+      <div class="rounded-2xl shadow-sm border border-gray-100 p-6 bg-white">
+        <div class="text-lg font-semibold mb-4">Recent Transactions</div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="text-left text-gray-500">
+                <th class="py-2 pr-4">Date</th>
+                <th class="py-2 pr-4">Description</th>
+                <th class="py-2 pr-4">Amount</th>
+                <th class="py-2 pr-4">Status</th>
+              </tr>
+            </thead>
+            <tbody id="transactions-table-body">
+              <!-- Populated by dashboard.js with mock data -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <a href="/index.html" class="text-primary hover:underline">&larr; Back to Home</a>
+  </main>
+  <!--
+    Extension points:
+    - Replace mock data with Supabase integration in dashboard.js
+    - Add more widgets or quick actions below
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <script src="dashboard.js" type="module" defer></script>
+</body>
+</html> 
