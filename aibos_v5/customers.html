@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-BOS Accounting - Customer Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'apple-blue': '#007AFF',
+                        'apple-green': '#34C759',
+                        'apple-orange': '#FF9500',
+                        'apple-red': '#FF3B30',
+                        'apple-gray': '#8E8E93',
+                        'apple-bg': '#F2F2F7',
+                        'apple-card': '#FFFFFF',
+                        'apple-border': '#E5E5EA'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-apple-bg min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-apple-card border-b border-apple-border shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold" style="background:#F9F9F9; color:#222; border-radius:0.5rem; padding:0.25rem 0.75rem;">AI-BOS</h1>
+                    </div>
+                    <div class="hidden md:block ml-10">
+                        <div class="flex items-baseline space-x-4">
+                            <a href="index.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">Dashboard</a>
+                            <a href="accounts.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">Chart of Accounts</a>
+                            <a href="transactions.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">General Ledger</a>
+                            <a href="ap-ar.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">AP/AR</a>
+                            <a href="#" class="text-apple-blue border-b-2 border-apple-blue px-3 py-2 text-sm font-medium">Customers</a>
+                            <a href="suppliers.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">Suppliers</a>
+                            <a href="organization.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">Organization</a>
+                            <a href="users.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">Users</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900">Customer Management</h2>
+                    <p class="text-gray-600 mt-2">Manage customer database, credit limits, and payment history</p>
+                </div>
+                <div class="flex space-x-3">
+                    <button id="addCustomerBtn" class="px-4 py-2 bg-apple-blue text-white rounded-lg hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Add Customer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-apple-card rounded-xl shadow-sm border border-apple-border p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Customers</p>
+                        <p id="totalCustomers" class="text-2xl font-bold text-gray-900">24</p>
+                    </div>
+                    <div class="h-12 w-12 bg-apple-blue/10 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-users text-apple-blue text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-apple-card rounded-xl shadow-sm border border-apple-border p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Active Customers</p>
+                        <p id="activeCustomers" class="text-2xl font-bold text-gray-900">22</p>
+                    </div>
+                    <div class="h-12 w-12 bg-apple-green/10 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-user-check text-apple-green text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-apple-card rounded-xl shadow-sm border border-apple-border p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Outstanding AR</p>
+                        <p id="outstandingAR" class="text-2xl font-bold text-gray-900">$15,000</p>
+                    </div>
+                    <div class="h-12 w-12 bg-apple-orange/10 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-hand-holding-usd text-apple-orange text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-apple-card rounded-xl shadow-sm border border-apple-border p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Avg Payment Time</p>
+                        <p id="avgPaymentTime" class="text-2xl font-bold text-gray-900">28 days</p>
+                    </div>
+                    <div class="h-12 w-12 bg-apple-gray/10 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-calendar-alt text-apple-gray text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customers Table -->
+        <div class="bg-apple-card rounded-xl shadow-sm border border-apple-border overflow-hidden">
+            <div class="px-6 py-4 border-b border-apple-border">
+                <h3 class="text-lg font-semibold text-gray-900">Customer Database</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-apple-border">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Credit Limit</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customersTableBody" class="bg-white divide-y divide-apple-border">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900">ABC Corporation</div>
+                                    <div class="text-sm text-gray-500">John Smith</div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div>
+                                    <div class="text-sm text-gray-900">john.smith@abccorp.com</div>
+                                    <div class="text-sm text-gray-500">+1 (555) 123-4567</div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$50,000</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900">$15,000</div>
+                                    <div class="text-xs text-gray-500">NET 30</div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    Active
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button class="text-apple-blue hover:text-blue-600 mr-3">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="text-apple-green hover:text-green-600 mr-3">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="text-apple-orange hover:text-orange-600">
+                                    <i class="fas fa-pause"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+    <script src="app.js"></script>
+</body>
+</html> 

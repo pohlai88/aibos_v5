@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-BOS Accounting - Chart of Accounts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'apple-blue': '#007AFF',
+                        'apple-green': '#34C759',
+                        'apple-orange': '#FF9500',
+                        'apple-red': '#FF3B30',
+                        'apple-gray': '#8E8E93',
+                        'apple-bg': '#F2F2F7',
+                        'apple-card': '#FFFFFF',
+                        'apple-border': '#E5E5EA'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-apple-bg min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-apple-card border-b border-apple-border shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-apple-blue">AI-BOS</h1>
+                    </div>
+                    <div class="hidden md:block ml-10">
+                        <div class="flex items-baseline space-x-4">
+                            <a href="index.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">Dashboard</a>
+                            <a href="#" class="text-apple-blue border-b-2 border-apple-blue px-3 py-2 text-sm font-medium">Chart of Accounts</a>
+                            <a href="transactions.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">General Ledger</a>
+                            <a href="ap-ar.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">AP/AR</a>
+                            <a href="customers.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">Customers</a>
+                            <a href="suppliers.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">Suppliers</a>
+                            <a href="organization.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">Organization</a>
+                            <a href="users.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">Users</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900">Chart of Accounts</h2>
+                    <p class="text-gray-600 mt-2">Manage your accounting structure and compliance templates</p>
+                </div>
+                <div class="flex space-x-3">
+                    <button id="importTemplateBtn" class="px-4 py-2 border border-apple-border text-apple-blue rounded-lg hover:bg-apple-blue hover:text-white transition-colors">
+                        <i class="fas fa-download mr-2"></i>Import Template
+                    </button>
+                    <button id="addAccountBtn" class="px-4 py-2 bg-apple-blue text-white rounded-lg hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Add Account
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compliance Templates -->
+        <div class="mb-8">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Compliance Templates</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-apple-card rounded-xl shadow-sm border border-apple-border p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="h-10 w-10 bg-apple-blue/10 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-flag text-apple-blue"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-900">US GAAP</h4>
+                            <p class="text-sm text-gray-600">Generally Accepted Accounting Principles</p>
+                        </div>
+                    </div>
+                    <button class="w-full px-3 py-2 bg-apple-blue text-white rounded-lg text-sm hover:bg-blue-600 transition-colors">
+                        Apply Template
+                    </button>
+                </div>
+                <div class="bg-apple-card rounded-xl shadow-sm border border-apple-border p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="h-10 w-10 bg-apple-green/10 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-globe text-apple-green"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-900">IFRS</h4>
+                            <p class="text-sm text-gray-600">International Financial Reporting Standards</p>
+                        </div>
+                    </div>
+                    <button class="w-full px-3 py-2 bg-apple-green text-white rounded-lg text-sm hover:bg-green-600 transition-colors">
+                        Apply Template
+                    </button>
+                </div>
+                <div class="bg-apple-card rounded-xl shadow-sm border border-apple-border p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="h-10 w-10 bg-apple-orange/10 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-building text-apple-orange"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-900">Custom</h4>
+                            <p class="text-sm text-gray-600">Create your own chart structure</p>
+                        </div>
+                    </div>
+                    <button class="w-full px-3 py-2 bg-apple-orange text-white rounded-lg text-sm hover:bg-orange-600 transition-colors">
+                        Create Custom
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Filters -->
+        <div class="bg-apple-card rounded-xl shadow-sm border border-apple-border p-6 mb-6">
+            <div class="flex flex-wrap items-center gap-4">
+                <div class="flex items-center space-x-2">
+                    <label class="text-sm font-medium text-gray-700">Account Type:</label>
+                    <select id="typeFilter" class="px-3 py-2 border border-apple-border rounded-lg text-sm">
+                        <option value="">All Types</option>
+                        <option value="asset">Assets</option>
+                        <option value="liability">Liabilities</option>
+                        <option value="equity">Equity</option>
+                        <option value="revenue">Revenue</option>
+                        <option value="expense">Expenses</option>
+                    </select>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <label class="text-sm font-medium text-gray-700">Status:</label>
+                    <select id="statusFilter" class="px-3 py-2 border border-apple-border rounded-lg text-sm">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <input type="text" id="searchAccounts" placeholder="Search accounts..." class="px-3 py-2 border border-apple-border rounded-lg text-sm w-64">
+                    <i class="fas fa-search text-gray-400"></i>
+                </div>
+                <button id="exportAccounts" class="px-4 py-2 border border-apple-border text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                    <i class="fas fa-download mr-2"></i>Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Accounts Table -->
+        <div class="bg-apple-card rounded-xl shadow-sm border border-apple-border overflow-hidden">
+            <div class="px-6 py-4 border-b border-apple-border">
+                <h3 class="text-lg font-semibold text-gray-900">Chart of Accounts</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-apple-border">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account #</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="accountsTableBody" class="bg-white divide-y divide-apple-border">
+                        <!-- Accounts will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Account Modal -->
+    <div id="accountModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-xl bg-apple-card">
+            <div class="mt-3">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="modalTitle" class="text-lg font-medium text-gray-900">Add Account</h3>
+                    <button id="closeModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="accountForm">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Account Number</label>
+                        <input type="text" id="accountNumber" required class="w-full px-3 py-2 border border-apple-border rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Account Name</label>
+                        <input type="text" id="accountName" required class="w-full px-3 py-2 border border-apple-border rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Account Type</label>
+                        <select id="accountType" required class="w-full px-3 py-2 border border-apple-border rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent">
+                            <option value="">Select Type</option>
+                            <option value="asset">Asset</option>
+                            <option value="liability">Liability</option>
+                            <option value="equity">Equity</option>
+                            <option value="revenue">Revenue</option>
+                            <option value="expense">Expense</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        <textarea id="accountDescription" rows="3" class="w-full px-3 py-2 border border-apple-border rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="accountActive" checked class="rounded border-apple-border text-apple-blue focus:ring-apple-blue">
+                            <span class="ml-2 text-sm text-gray-700">Active Account</span>
+                        </label>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" id="cancelAccount" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-apple-border rounded-lg hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-apple-blue rounded-lg hover:bg-blue-600">
+                            Save Account
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Template Modal -->
+    <div id="templateModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-xl bg-apple-card">
+            <div class="mt-3">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium text-gray-900">Import Chart Template</h3>
+                    <button id="closeTemplateModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Template</label>
+                    <select id="templateSelect" class="w-full px-3 py-2 border border-apple-border rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent">
+                        <option value="us_gaap">US GAAP Standard</option>
+                        <option value="ifrs">IFRS Standard</option>
+                        <option value="quickbooks">QuickBooks Compatible</option>
+                        <option value="xero">Xero Compatible</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="overwriteExisting" class="rounded border-apple-border text-apple-blue focus:ring-apple-blue">
+                        <span class="ml-2 text-sm text-gray-700">Overwrite existing accounts</span>
+                    </label>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="cancelTemplate" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-apple-border rounded-lg hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="button" id="importTemplate" class="px-4 py-2 text-sm font-medium text-white bg-apple-blue rounded-lg hover:bg-blue-600">
+                        Import Template
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+    <script src="app.js"></script>
+    <script>
+        class ChartOfAccounts {
+            constructor() {
+                this.accounts = [];
+                this.init();
+            }
+
+            async init() {
+                await this.loadAccounts();
+                this.setupEventListeners();
+                this.renderAccounts();
+            }
+
+            async loadAccounts() {
+                this.accounts = await window.aibosDB.getAllAccounts();
+            }
+
+            setupEventListeners() {
+                document.getElementById('addAccountBtn').addEventListener('click', () => this.showAddModal());
+                document.getElementById('closeModal').addEventListener('click', () => this.hideModal());
+                document.getElementById('cancelAccount').addEventListener('click', () => this.hideModal());
+                document.getElementById('accountForm').addEventListener('submit', (e) => this.handleSubmit(e));
+                document.getElementById('importTemplateBtn').addEventListener('click', () => this.showTemplateModal());
+                document.getElementById('closeTemplateModal').addEventListener('click', () => this.hideTemplateModal());
+                document.getElementById('cancelTemplate').addEventListener('click', () => this.hideTemplateModal());
+                document.getElementById('importTemplate').addEventListener('click', () => this.importTemplate());
+                document.getElementById('exportAccounts').addEventListener('click', () => this.exportAccounts());
+                
+                // Filters
+                document.getElementById('typeFilter').addEventListener('change', () => this.filterAccounts());
+                document.getElementById('statusFilter').addEventListener('change', () => this.filterAccounts());
+                document.getElementById('searchAccounts').addEventListener('input', () => this.filterAccounts());
+            }
+
+            renderAccounts() {
+                const tbody = document.getElementById('accountsTableBody');
+                tbody.innerHTML = '';
+
+                this.accounts.forEach(account => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${account.accountNumber}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${account.name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${this.getTypeColor(account.type)}">
+                                ${account.type.charAt(0).toUpperCase() + account.type.slice(1)}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${this.formatCurrency(account.balance)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${account.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${account.active ? 'Active' : 'Inactive'}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button onclick="chartOfAccounts.editAccount(${account.id})" class="text-apple-blue hover:text-blue-600 mr-3">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="chartOfAccounts.toggleAccountStatus(${account.id})" class="text-apple-orange hover:text-orange-600">
+                                <i class="fas fa-${account.active ? 'pause' : 'play'}"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            getTypeColor(type) {
+                const colors = {
+                    asset: 'bg-blue-100 text-blue-800',
+                    liability: 'bg-red-100 text-red-800',
+                    equity: 'bg-purple-100 text-purple-800',
+                    revenue: 'bg-green-100 text-green-800',
+                    expense: 'bg-orange-100 text-orange-800'
+                };
+                return colors[type] || 'bg-gray-100 text-gray-800';
+            }
+
+            showAddModal() {
+                document.getElementById('modalTitle').textContent = 'Add Account';
+                document.getElementById('accountForm').reset();
+                document.getElementById('accountModal').classList.remove('hidden');
+            }
+
+            hideModal() {
+                document.getElementById('accountModal').classList.add('hidden');
+            }
+
+            showTemplateModal() {
+                document.getElementById('templateModal').classList.remove('hidden');
+            }
+
+            hideTemplateModal() {
+                document.getElementById('templateModal').classList.add('hidden');
+            }
+
+            async handleSubmit(e) {
+                e.preventDefault();
+                const formData = {
+                    accountNumber: document.getElementById('accountNumber').value,
+                    name: document.getElementById('accountName').value,
+                    type: document.getElementById('accountType').value,
+                    description: document.getElementById('accountDescription').value,
+                    active: document.getElementById('accountActive').checked
+                };
+
+                try {
+                    await window.aibosDB.addAccount(formData);
+                    await this.loadAccounts();
+                    this.renderAccounts();
+                    this.hideModal();
+                    alert('Account added successfully!');
+                } catch (error) {
+                    alert('Error adding account: ' + error.message);
+                }
+            }
+
+            async editAccount(id) {
+                const account = this.accounts.find(a => a.id === id);
+                if (!account) return;
+
+                document.getElementById('modalTitle').textContent = 'Edit Account';
+                document.getElementById('accountNumber').value = account.accountNumber;
+                document.getElementById('accountName').value = account.name;
+                document.getElementById('accountType').value = account.type;
+                document.getElementById('accountDescription').value = account.description || '';
+                document.getElementById('accountActive').checked = account.active;
+
+                document.getElementById('accountModal').classList.remove('hidden');
+            }
+
+            async toggleAccountStatus(id) {
+                const account = this.accounts.find(a => a.id === id);
+                if (!account) return;
+
+                try {
+                    await window.aibosDB.updateAccount(id, { active: !account.active });
+                    await this.loadAccounts();
+                    this.renderAccounts();
+                } catch (error) {
+                    alert('Error updating account: ' + error.message);
+                }
+            }
+
+            async importTemplate() {
+                const template = document.getElementById('templateSelect').value;
+                const overwrite = document.getElementById('overwriteExisting').checked;
+
+                try {
+                    // This would integrate with backend to import templates
+                    alert(`Importing ${template} template...`);
+                    this.hideTemplateModal();
+                } catch (error) {
+                    alert('Error importing template: ' + error.message);
+                }
+            }
+
+            exportAccounts() {
+                const data = this.accounts.map(account => ({
+                    accountNumber: account.accountNumber,
+                    name: account.name,
+                    type: account.type,
+                    description: account.description,
+                    balance: account.balance,
+                    active: account.active
+                }));
+
+                const csv = this.convertToCSV(data);
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'chart_of_accounts.csv';
+                a.click();
+            }
+
+            convertToCSV(data) {
+                const headers = Object.keys(data[0]);
+                const csvContent = [
+                    headers.join(','),
+                    ...data.map(row => headers.map(header => row[header]).join(','))
+                ].join('\n');
+                return csvContent;
+            }
+
+            filterAccounts() {
+                const typeFilter = document.getElementById('typeFilter').value;
+                const statusFilter = document.getElementById('statusFilter').value;
+                const searchTerm = document.getElementById('searchAccounts').value.toLowerCase();
+
+                const filtered = this.accounts.filter(account => {
+                    const matchesType = !typeFilter || account.type === typeFilter;
+                    const matchesStatus = !statusFilter || 
+                        (statusFilter === 'active' && account.active) ||
+                        (statusFilter === 'inactive' && !account.active);
+                    const matchesSearch = !searchTerm || 
+                        account.name.toLowerCase().includes(searchTerm) ||
+                        account.accountNumber.toLowerCase().includes(searchTerm);
+
+                    return matchesType && matchesStatus && matchesSearch;
+                });
+
+                this.renderFilteredAccounts(filtered);
+            }
+
+            renderFilteredAccounts(accounts) {
+                const tbody = document.getElementById('accountsTableBody');
+                tbody.innerHTML = '';
+
+                accounts.forEach(account => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${account.accountNumber}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${account.name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${this.getTypeColor(account.type)}">
+                                ${account.type.charAt(0).toUpperCase() + account.type.slice(1)}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${this.formatCurrency(account.balance)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${account.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${account.active ? 'Active' : 'Inactive'}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button onclick="chartOfAccounts.editAccount(${account.id})" class="text-apple-blue hover:text-blue-600 mr-3">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="chartOfAccounts.toggleAccountStatus(${account.id})" class="text-apple-orange hover:text-orange-600">
+                                <i class="fas fa-${account.active ? 'pause' : 'play'}"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            formatCurrency(amount) {
+                return new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                }).format(amount);
+            }
+        }
+
+        // Initialize when page loads
+        let chartOfAccounts;
+        document.addEventListener('DOMContentLoaded', function() {
+            chartOfAccounts = new ChartOfAccounts();
+        });
+    </script>
+</body>
+</html> 

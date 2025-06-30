@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-BOS Accounting - Tax Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'apple-blue': '#007AFF',
+                        'apple-green': '#34C759',
+                        'apple-orange': '#FF9500',
+                        'apple-red': '#FF3B30',
+                        'apple-gray': '#8E8E93',
+                        'apple-bg': '#F2F2F7',
+                        'apple-card': '#FFFFFF',
+                        'apple-border': '#E5E5EA'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-apple-bg min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-apple-card border-b border-apple-border shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-apple-blue">AI-BOS</h1>
+                    </div>
+                    <div class="hidden md:block ml-10">
+                        <div class="flex items-baseline space-x-4">
+                            <a href="index.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">Dashboard</a>
+                            <a href="accounts.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">Chart of Accounts</a>
+                            <a href="transactions.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">General Ledger</a>
+                            <a href="ap-ar.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">AP/AR</a>
+                            <a href="banking.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">Banking</a>
+                            <a href="#" class="text-apple-blue border-b-2 border-apple-blue px-3 py-2 text-sm font-medium">Tax</a>
+                            <a href="reports.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">Reports</a>
+                            <a href="audit.html" class="text-gray-500 hover:text-apple-blue px-3 py-2 text-sm font-medium">Audit Trail</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900">Tax Management</h2>
+                    <p class="text-gray-600 mt-2">Track VAT, GST, and sales tax with automated calculations</p>
+                </div>
+                <div class="flex space-x-3">
+                    <button id="configureTaxBtn" class="px-4 py-2 border border-apple-border text-apple-blue rounded-lg hover:bg-apple-blue hover:text-white transition-colors">
+                        <i class="fas fa-cog mr-2"></i>Configure Tax
+                    </button>
+                    <button id="generateTaxReportBtn" class="px-4 py-2 bg-apple-blue text-white rounded-lg hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-file-alt mr-2"></i>Generate Report
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tax Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <!-- VAT Collected -->
+            <div class="bg-apple-card rounded-xl shadow-sm border border-apple-border p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">VAT Collected</p>
+                        <p id="vatCollected" class="text-2xl font-bold text-gray-900">$3,200</p>
+                        <p class="text-sm text-apple-green mt-1">
+                            <i class="fas fa-arrow-up mr-1"></i>+15.2% this month
+                        </p>
+                    </div>
+                    <div class="h-12 w-12 bg-apple-green/10 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-hand-holding-usd text-apple-green text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VAT Paid -->
+            <div class="bg-apple-card rounded-xl shadow-sm border border-apple-border p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">VAT Paid</p>
+                        <p id="vatPaid" class="text-2xl font-bold text-gray-900">$1,800</p>
+                        <p class="text-sm text-apple-blue mt-1">
+                            <i class="fas fa-arrow-down mr-1"></i>Input tax credits
+                        </p>
+                    </div>
+                    <div class="h-12 w-12 bg-apple-blue/10 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-credit-card text-apple-blue text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Net VAT Due -->
+            <div class="bg-apple-card rounded-xl shadow-sm border border-apple-border p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Net VAT Due</p>
+                        <p id="netVatDue" class="text-2xl font-bold text-apple-red">$1,400</p>
+                        <p class="text-sm text-apple-red mt-1">
+                            <i class="fas fa-exclamation-circle mr-1"></i>Due Dec 31, 2024
+                        </p>
+                    </div>
+                    <div class="h-12 w-12 bg-apple-red/10 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-calendar-times text-apple-red text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tax Rate -->
+            <div class="bg-apple-card rounded-xl shadow-sm border border-apple-border p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Standard Rate</p>
+                        <p id="taxRate" class="text-2xl font-bold text-gray-900">20%</p>
+                        <p class="text-sm text-gray-600 mt-1">
+                            <i class="fas fa-percentage mr-1"></i>VAT rate
+                        </p>
+                    </div>
+                    <div class="h-12 w-12 bg-apple-gray/10 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-percentage text-apple-gray text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tax Configuration -->
+        <div class="bg-apple-card rounded-xl shadow-sm border border-apple-border p-6 mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900">Tax Configuration</h3>
+                <button id="editTaxConfigBtn" class="text-apple-blue text-sm font-medium hover:text-blue-600">
+                    <i class="fas fa-edit mr-1"></i>Edit
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <h4 class="text-sm font-medium text-gray-700 mb-3">Tax Rates</h4>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Standard Rate</span>
+                            <span class="text-sm font-medium">20%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Reduced Rate</span>
+                            <span class="text-sm font-medium">5%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Zero Rate</span>
+                            <span class="text-sm font-medium">0%</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-sm font-medium text-gray-700 mb-3">Filing Period</h4>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Frequency</span>
+                            <span class="text-sm font-medium">Quarterly</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Next Filing</span>
+                            <span class="text-sm font-medium text-apple-orange">Dec 31, 2024</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Payment Due</span>
+                            <span class="text-sm font-medium text-apple-orange">Dec 31, 2024</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-sm font-medium text-gray-700 mb-3">Tax Authority</h4>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Country</span>
+                            <span class="text-sm font-medium">United Kingdom</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">VAT Number</span>
+                            <span class="text-sm font-medium">GB123456789</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Scheme</span>
+                            <span class="text-sm font-medium">Standard VAT</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tax Transactions -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Taxable Sales -->
+            <div class="bg-apple-card rounded-xl shadow-sm border border-apple-border p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Taxable Sales</h3>
+                    <div class="flex space-x-2">
+                        <button class="px-3 py-1 text-xs bg-apple-blue text-white rounded-lg">This Period</button>
+                        <button class="px-3 py-1 text-xs bg-gray-200 text-gray-700 rounded-lg">Previous</button>
+                    </div>
+                </div>
+                <div class="space-y-3 max-h-64 overflow-y-auto">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                            <p class="text-sm font-medium">Service Revenue - ABC Corp</p>
+                            <p class="text-xs text-gray-600">Jan 15, 2024 • Invoice #INV-001</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-medium text-apple-green">+$2,500.00</p>
+                            <p class="text-xs text-gray-600">VAT: $416.67</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                            <p class="text-sm font-medium">Product Sales - XYZ Ltd</p>
+                            <p class="text-xs text-gray-600">Jan 14, 2024 • Invoice #INV-002</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-medium text-apple-green">+$1,200.00</p>
+                            <p class="text-xs text-gray-600">VAT: $200.00</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                            <p class="text-sm font-medium">Consulting Fee - DEF Inc</p>
+                            <p class="text-xs text-gray-600">Jan 13, 2024 • Invoice #INV-003</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-medium text-apple-green">+$3,000.00</p>
+                            <p class="text-xs text-gray-600">VAT: $500.00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Taxable Purchases -->
+            <div class="bg-apple-card rounded-xl shadow-sm border border-apple-border p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Taxable Purchases</h3>
+                    <div class="flex space-x-2">
+                        <button class="px-3 py-1 text-xs bg-apple-blue text-white rounded-lg">This Period</button>
+                        <button class="px-3 py-1 text-xs bg-gray-200 text-gray-700 rounded-lg">Previous</button>
+                    </div>
+                </div>
+                <div class="space-y-3 max-h-64 overflow-y-auto">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                            <p class="text-sm font-medium">Office Supplies</p>
+                            <p class="text-xs text-gray-600">Jan 15, 2024 • Bill #BILL-001</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-medium text-apple-red">-$150.00</p>
+                            <p class="text-xs text-gray-600">VAT: -$25.00</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                            <p class="text-sm font-medium">Equipment Purchase</p>
+                            <p class="text-xs text-gray-600">Jan 12, 2024 • Bill #BILL-002</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-medium text-apple-red">-$2,500.00</p>
+                            <p class="text-xs text-gray-600">VAT: -$416.67</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                            <p class="text-sm font-medium">Software License</p>
+                            <p class="text-xs text-gray-600">Jan 10, 2024 • Bill #BILL-003</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-medium text-apple-red">-$500.00</p>
+                            <p class="text-xs text-gray-600">VAT: -$83.33</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tax Summary Report -->
+        <div class="bg-apple-card rounded-xl shadow-sm border border-apple-border p-6 mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900">Tax Summary Report</h3>
+                <div class="flex space-x-2">
+                    <button id="exportTaxReportBtn" class="px-4 py-2 border border-apple-border text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-download mr-2"></i>Export
+                    </button>
+                    <button id="fileTaxReturnBtn" class="px-4 py-2 bg-apple-green text-white rounded-lg hover:bg-green-600 transition-colors">
+                        <i class="fas fa-paper-plane mr-2"></i>File Return
+                    </button>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="text-sm font-medium text-gray-700 mb-4">VAT Summary</h4>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Total Sales (excl. VAT)</span>
+                            <span class="text-sm font-medium">$16,000.00</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">VAT on Sales</span>
+                            <span class="text-sm font-medium text-apple-green">$3,200.00</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Total Purchases (excl. VAT)</span>
+                            <span class="text-sm font-medium">$9,000.00</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">VAT on Purchases</span>
+                            <span class="text-sm font-medium text-apple-red">$1,800.00</span>
+                        </div>
+                        <div class="pt-2 border-t border-apple-border">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-medium text-gray-900">Net VAT Due</span>
+                                <span class="text-sm font-medium text-apple-red">$1,400.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-sm font-medium text-gray-700 mb-4">Filing Information</h4>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Period</span>
+                            <span class="text-sm font-medium">Q4 2024</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Filing Deadline</span>
+                            <span class="text-sm font-medium text-apple-orange">Dec 31, 2024</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Payment Deadline</span>
+                            <span class="text-sm font-medium text-apple-orange">Dec 31, 2024</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Status</span>
+                            <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">Pending</span>
+                        </div>
+                        <div class="pt-2 border-t border-apple-border">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Days Remaining</span>
+                                <span class="text-sm font-medium text-apple-orange">5 days</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tax Compliance Alerts -->
+        <div class="bg-apple-card rounded-xl shadow-sm border border-apple-border p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Compliance Alerts</h3>
+                <button id="viewAllAlertsBtn" class="text-apple-blue text-sm font-medium hover:text-blue-600">
+                    View All
+                </button>
+            </div>
+            <div class="space-y-3">
+                <div class="flex items-center p-3 bg-red-50 rounded-lg">
+                    <i class="fas fa-exclamation-triangle text-apple-red mr-3"></i>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-gray-900">VAT Return Due</p>
+                        <p class="text-xs text-gray-600">Q4 2024 VAT return is due in 5 days</p>
+                    </div>
+                    <button class="text-apple-red hover:text-red-700 text-sm font-medium">File Now</button>
+                </div>
+                <div class="flex items-center p-3 bg-yellow-50 rounded-lg">
+                    <i class="fas fa-clock text-apple-orange mr-3"></i>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-gray-900">Payment Reminder</p>
+                        <p class="text-xs text-gray-600">VAT payment of $1,400.00 due on Dec 31, 2024</p>
+                    </div>
+                    <button class="text-apple-orange hover:text-orange-700 text-sm font-medium">Schedule Payment</button>
+                </div>
+                <div class="flex items-center p-3 bg-blue-50 rounded-lg">
+                    <i class="fas fa-info-circle text-apple-blue mr-3"></i>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-gray-900">Rate Change Notice</p>
+                        <p class="text-xs text-gray-600">VAT rate changes effective Jan 1, 2025</p>
+                    </div>
+                    <button class="text-apple-blue hover:text-blue-700 text-sm font-medium">Review</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configure Tax Modal -->
+    <div id="taxConfigModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-xl bg-apple-card">
+            <div class="mt-3">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium text-gray-900">Configure Tax Settings</h3>
+                    <button id="closeTaxConfigModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="taxConfigForm">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tax Type</label>
+                        <select id="taxType" required class="w-full px-3 py-2 border border-apple-border rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent">
+                            <option value="vat">VAT (Value Added Tax)</option>
+                            <option value="gst">GST (Goods and Services Tax)</option>
+                            <option value="sales_tax">Sales Tax</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Country</label>
+                        <select id="taxCountry" required class="w-full px-3 py-2 border border-apple-border rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent">
+                            <option value="uk">United Kingdom</option>
+                            <option value="us">United States</option>
+                            <option value="ca">Canada</option>
+                            <option value="au">Australia</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Standard Tax Rate (%)</label>
+                        <input type="number" id="standardRate" step="0.1" required class="w-full px-3 py-2 border border-apple-border rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Filing Frequency</label>
+                        <select id="filingFrequency" required class="w-full px-3 py-2 border border-apple-border rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent">
+                            <option value="monthly">Monthly</option>
+                            <option value="quarterly">Quarterly</option>
+                            <option value="annually">Annually</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tax Registration Number</label>
+                        <input type="text" id="taxRegistrationNumber" class="w-full px-3 py-2 border border-apple-border rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent">
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" id="cancelTaxConfig" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-apple-border rounded-lg hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-apple-blue rounded-lg hover:bg-blue-600">
+                            Save Configuration
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+    <script src="app.js"></script>
+    <script>
+        class TaxManagement {
+            constructor() {
+                this.taxConfig = {};
+                this.taxTransactions = [];
+                this.init();
+            }
+
+            async init() {
+                await this.loadData();
+                this.setupEventListeners();
+                this.renderData();
+            }
+
+            async loadData() {
+                // Mock tax configuration
+                this.taxConfig = {
+                    type: 'vat',
+                    country: 'uk',
+                    standardRate: 20,
+                    filingFrequency: 'quarterly',
+                    registrationNumber: 'GB123456789',
+                    nextFiling: '2024-12-31'
+                };
+
+                // Mock tax transactions
+                this.taxTransactions = [
+                    {
+                        id: 1,
+                        type: 'sale',
+                        description: 'Service Revenue - ABC Corp',
+                        amount: 2500,
+                        taxAmount: 416.67,
+                        date: '2024-01-15'
+                    },
+                    {
+                        id: 2,
+                        type: 'purchase',
+                        description: 'Office Supplies',
+                        amount: -150,
+                        taxAmount: -25,
+                        date: '2024-01-15'
+                    }
+                ];
+            }
+
+            setupEventListeners() {
+                document.getElementById('configureTaxBtn').addEventListener('click', () => this.showTaxConfigModal());
+                document.getElementById('closeTaxConfigModal').addEventListener('click', () => this.hideTaxConfigModal());
+                document.getElementById('cancelTaxConfig').addEventListener('click', () => this.hideTaxConfigModal());
+                document.getElementById('taxConfigForm').addEventListener('submit', (e) => this.handleTaxConfigSubmit(e));
+                document.getElementById('generateTaxReportBtn').addEventListener('click', () => this.generateTaxReport());
+                document.getElementById('exportTaxReportBtn').addEventListener('click', () => this.exportTaxReport());
+                document.getElementById('fileTaxReturnBtn').addEventListener('click', () => this.fileTaxReturn());
+            }
+
+            renderData() {
+                this.updateSummaryCards();
+                this.updateTaxConfig();
+            }
+
+            updateSummaryCards() {
+                const vatCollected = this.taxTransactions
+                    .filter(t => t.type === 'sale')
+                    .reduce((sum, t) => sum + t.taxAmount, 0);
+                
+                const vatPaid = Math.abs(this.taxTransactions
+                    .filter(t => t.type === 'purchase')
+                    .reduce((sum, t) => sum + t.taxAmount, 0));
+                
+                const netVatDue = vatCollected - vatPaid;
+
+                document.getElementById('vatCollected').textContent = this.formatCurrency(vatCollected);
+                document.getElementById('vatPaid').textContent = this.formatCurrency(vatPaid);
+                document.getElementById('netVatDue').textContent = this.formatCurrency(netVatDue);
+                document.getElementById('taxRate').textContent = this.taxConfig.standardRate + '%';
+            }
+
+            updateTaxConfig() {
+                // Tax configuration is displayed in the HTML template
+            }
+
+            showTaxConfigModal() {
+                // Populate form with current config
+                document.getElementById('taxType').value = this.taxConfig.type;
+                document.getElementById('taxCountry').value = this.taxConfig.country;
+                document.getElementById('standardRate').value = this.taxConfig.standardRate;
+                document.getElementById('filingFrequency').value = this.taxConfig.filingFrequency;
+                document.getElementById('taxRegistrationNumber').value = this.taxConfig.registrationNumber;
+
+                document.getElementById('taxConfigModal').classList.remove('hidden');
+            }
+
+            hideTaxConfigModal() {
+                document.getElementById('taxConfigModal').classList.add('hidden');
+            }
+
+            async handleTaxConfigSubmit(e) {
+                e.preventDefault();
+                const formData = {
+                    type: document.getElementById('taxType').value,
+                    country: document.getElementById('taxCountry').value,
+                    standardRate: parseFloat(document.getElementById('standardRate').value),
+                    filingFrequency: document.getElementById('filingFrequency').value,
+                    registrationNumber: document.getElementById('taxRegistrationNumber').value
+                };
+
+                this.taxConfig = { ...this.taxConfig, ...formData };
+                this.hideTaxConfigModal();
+                this.renderData();
+                alert('Tax configuration updated successfully!');
+            }
+
+            generateTaxReport() {
+                alert('Generating tax report...');
+                // This would generate a comprehensive tax report
+                setTimeout(() => {
+                    alert('Tax report generated successfully!');
+                }, 2000);
+            }
+
+            exportTaxReport() {
+                const reportData = {
+                    period: 'Q4 2024',
+                    vatCollected: 3200,
+                    vatPaid: 1800,
+                    netVatDue: 1400,
+                    transactions: this.taxTransactions
+                };
+
+                const csv = this.convertToCSV(reportData);
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'tax_report_q4_2024.csv';
+                a.click();
+            }
+
+            fileTaxReturn() {
+                alert('Filing tax return...');
+                // This would submit the tax return to the tax authority
+                setTimeout(() => {
+                    alert('Tax return filed successfully!');
+                }, 3000);
+            }
+
+            convertToCSV(data) {
+                // Simple CSV conversion for tax report
+                const headers = ['Period', 'VAT Collected', 'VAT Paid', 'Net VAT Due'];
+                const values = [data.period, data.vatCollected, data.vatPaid, data.netVatDue];
+                return [headers.join(','), values.join(',')].join('\n');
+            }
+
+            formatCurrency(amount) {
+                return new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                }).format(amount);
+            }
+        }
+
+        // Initialize when page loads
+        let taxManagement;
+        document.addEventListener('DOMContentLoaded', function() {
+            taxManagement = new TaxManagement();
+        });
+    </script>
+</body>
+</html> 
