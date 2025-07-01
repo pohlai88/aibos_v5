@@ -1,0 +1,37 @@
+{
+  "packages": {
+    ".": {
+      "changelog-sections": [
+        { "type": "feat", "section": "🚀 Features" },
+        { "type": "fix", "section": "🐛 Bug Fixes" },
+        { "type": "chore", "section": "🔧 Maintenance" },
+        { "type": "docs", "section": "📚 Documentation" },
+        { "type": "refactor", "section": "♻️ Code Refactoring" },
+        { "type": "test", "section": "🧪 Tests" },
+        { "type": "ci", "section": "⚙️ CI/CD" },
+        { "type": "style", "section": "💄 Styling" },
+        { "type": "perf", "section": "⚡ Performance" },
+        { "type": "build", "section": "📦 Build System" }
+      ],
+      "release-type": "node",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": true,
+      "include-component-in-tag": false,
+      "tag-separator": "@",
+      "release-notes": {
+        "template": "## 🎉 What's New in ${version}\n\n${changelog}\n\n## 📋 Full Changelog\n\n${changelog}\n\n## 🔗 Links\n\n- [GitHub Release](https://github.com/pohlai88/aibos_v5/releases/tag/${tag})\n- [Documentation](https://github.com/pohlai88/aibos_v5/blob/main/README.md)\n\n## 🙏 Contributors\n\nThank you to all contributors who made this release possible!"
+      }
+    }
+  },
+  "bootstrap-sha": "a5c6efd",
+  "release-type": "node",
+  "include-component-in-tag": false,
+  "tag-separator": "@",
+  "plugins": [
+    {
+      "type": "linked-versions",
+      "groupName": "aibos-v5",
+      "components": ["."]
+    }
+  ]
+}
