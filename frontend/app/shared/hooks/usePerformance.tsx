@@ -505,11 +505,15 @@ export const withPerformanceTracking = <P extends object>(
   moduleName: string,
   options: PerformanceOptions = {}
 ) => {
-  return (props: P) => {
+  const WrappedComponent = (props: P) => {
     const performance = usePerformanceTracking(moduleName, options);
 
     return <Component {...props} performance={performance} />;
   };
+
+  WrappedComponent.displayName = `withPerformanceTracking(${Component.displayName || Component.name})`;
+
+  return WrappedComponent;
 };
 
 /**

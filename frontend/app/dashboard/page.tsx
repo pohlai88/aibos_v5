@@ -186,7 +186,7 @@ export default function DashboardPage() {
           Welcome back, {user.email}
         </h1>
         <p className="text-gray-600">
-          Here's what's happening with your business today.
+          Here&apos;s what&apos;s happening with your business today.
         </p>
       </div>
 
