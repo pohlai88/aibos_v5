@@ -1,119 +1,136 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { supabase } from '../../lib/supabaseClient'
-import Link from 'next/link'
+import { useState, useEffect } from "react";
+import { supabase } from "../../lib/supabaseClient";
+import Link from "next/link";
 
 interface Employee {
-  id: string
-  employee_id: string
-  full_name: string
-  primary_email: string
-  recovery_email?: string
-  user_type: string
-  role?: string
-  status: string
-  department_id?: string
-  position?: string
-  date_joined?: string
-  created_at: string
+  id: string;
+  employee_id: string;
+  full_name: string;
+  primary_email: string;
+  recovery_email?: string;
+  user_type: string;
+  role?: string;
+  status: string;
+  department_id?: string;
+  position?: string;
+  date_joined?: string;
+  created_at: string;
 }
 
 export default function EmployeesPage() {
-  const [employees, setEmployees] = useState<Employee[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filterStatus, setFilterStatus] = useState('active')
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("active");
 
   useEffect(() => {
-    fetchEmployees()
-  }, [filterStatus])
+    fetchEmployees();
+  }, [filterStatus]);
 
   const fetchEmployees = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       let query = supabase
-        .from('employee_master')
-        .select('*')
-        .order('created_at', { ascending: false })
+        .from("employee_master")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-      if (filterStatus !== 'all') {
-        query = query.eq('status', filterStatus)
+      if (filterStatus !== "all") {
+        query = query.eq("status", filterStatus);
       }
 
-      const { data, error } = await query
+      const { data, error } = await query;
 
       if (error) {
-        console.error('Error fetching employees:', error)
-        return
+        console.error("Error fetching employees:", error);
+        return;
       }
 
-      setEmployees(data || [])
+      setEmployees(data || []);
     } catch (error) {
-      console.error('Error:', error)
+      console.error("Error:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleSoftDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to deactivate this employee?')) return
+    if (!confirm("Are you sure you want to deactivate this employee?")) return;
 
     try {
       const { error } = await supabase
-        .from('employee_master')
-        .update({ status: 'inactive' })
-        .eq('id', id)
+        .from("employee_master")
+        .update({ status: "inactive" })
+        .eq("id", id);
 
       if (error) {
-        console.error('Error deactivating employee:', error)
-        return
+        console.error("Error deactivating employee:", error);
+        return;
       }
 
       // Refresh the list
-      fetchEmployees()
+      fetchEmployees();
     } catch (error) {
-      console.error('Error:', error)
+      console.error("Error:", error);
     }
-  }
+  };
 
-  const filteredEmployees = employees.filter(employee =>
-    employee.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    employee.employee_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    employee.primary_email.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredEmployees = employees.filter(
+    (employee) =>
+      employee.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      employee.employee_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      employee.primary_email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      active: { color: 'bg-green-100 text-green-800', label: 'Active' },
-      inactive: { color: 'bg-gray-100 text-gray-800', label: 'Inactive' },
-      'pre-boarding': { color: 'bg-blue-100 text-blue-800', label: 'Pre-boarding' },
-      'left-company': { color: 'bg-red-100 text-red-800', label: 'Left Company' }
-    }
-    
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.inactive
+      active: { color: "bg-green-100 text-green-800", label: "Active" },
+      inactive: { color: "bg-gray-100 text-gray-800", label: "Inactive" },
+      "pre-boarding": {
+        color: "bg-blue-100 text-blue-800",
+        label: "Pre-boarding",
+      },
+      "left-company": {
+        color: "bg-red-100 text-red-800",
+        label: "Left Company",
+      },
+    };
+
+    const config =
+      statusConfig[status as keyof typeof statusConfig] ||
+      statusConfig.inactive;
     return (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.color}`}>
+      <span
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.color}`}
+      >
         {config.label}
       </span>
-    )
-  }
+    );
+  };
 
   const getUserTypeBadge = (userType: string) => {
     const typeConfig = {
-      employee: { color: 'bg-purple-100 text-purple-800', label: 'Employee' },
-      candidate: { color: 'bg-yellow-100 text-yellow-800', label: 'Candidate' },
-      contractor: { color: 'bg-orange-100 text-orange-800', label: 'Contractor' },
-      vendor: { color: 'bg-indigo-100 text-indigo-800', label: 'Vendor' }
-    }
-    
-    const config = typeConfig[userType as keyof typeof typeConfig] || typeConfig.candidate
+      employee: { color: "bg-purple-100 text-purple-800", label: "Employee" },
+      candidate: { color: "bg-yellow-100 text-yellow-800", label: "Candidate" },
+      contractor: {
+        color: "bg-orange-100 text-orange-800",
+        label: "Contractor",
+      },
+      vendor: { color: "bg-indigo-100 text-indigo-800", label: "Vendor" },
+    };
+
+    const config =
+      typeConfig[userType as keyof typeof typeConfig] || typeConfig.candidate;
     return (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.color}`}>
+      <span
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.color}`}
+      >
         {config.label}
       </span>
-    )
-  }
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -124,7 +141,7 @@ export default function EmployeesPage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Employees</h1>
               <p className="mt-1 text-sm text-gray-500">
-                Manage your organization's employee records
+                Manage your organization&apos;s employee records
               </p>
             </div>
             <Link
@@ -142,7 +159,10 @@ export default function EmployeesPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Search */}
               <div>
-                <label htmlFor="search" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="search"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Search
                 </label>
                 <input
@@ -157,7 +177,10 @@ export default function EmployeesPage() {
 
               {/* Status Filter */}
               <div>
-                <label htmlFor="status" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="status"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Status
                 </label>
                 <select
@@ -177,7 +200,8 @@ export default function EmployeesPage() {
               {/* Results Count */}
               <div className="flex items-end">
                 <p className="text-sm text-gray-500">
-                  {filteredEmployees.length} employee{filteredEmployees.length !== 1 ? 's' : ''} found
+                  {filteredEmployees.length} employee
+                  {filteredEmployees.length !== 1 ? "s" : ""} found
                 </p>
               </div>
             </div>
@@ -190,7 +214,9 @@ export default function EmployeesPage() {
             {loading ? (
               <div className="p-8 text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div>
-                <p className="mt-2 text-sm text-gray-500">Loading employees...</p>
+                <p className="mt-2 text-sm text-gray-500">
+                  Loading employees...
+                </p>
               </div>
             ) : filteredEmployees.length === 0 ? (
               <div className="p-8 text-center">
@@ -205,7 +231,11 @@ export default function EmployeesPage() {
                         <div className="flex-shrink-0">
                           <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
                             <span className="text-sm font-medium text-indigo-600">
-                              {employee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                              {employee.full_name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")
+                                .toUpperCase()}
                             </span>
                           </div>
                         </div>
@@ -222,9 +252,7 @@ export default function EmployeesPage() {
                               <span>ID: {employee.employee_id}</span>
                             )}
                             <span>{employee.primary_email}</span>
-                            {employee.role && (
-                              <span>{employee.role}</span>
-                            )}
+                            {employee.role && <span>{employee.role}</span>}
                           </div>
                         </div>
                       </div>
@@ -235,7 +263,7 @@ export default function EmployeesPage() {
                         >
                           Edit
                         </Link>
-                        {employee.status === 'active' && (
+                        {employee.status === "active" && (
                           <button
                             onClick={() => handleSoftDelete(employee.id)}
                             className="text-red-600 hover:text-red-900 text-sm font-medium"
@@ -253,5 +281,5 @@ export default function EmployeesPage() {
         </div>
       </div>
     </div>
-  )
-} 
+  );
+}

@@ -26,8 +26,10 @@ export default function ChatPage() {
   const [participants, setParticipants] = useState<ChatParticipant[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [sending, setSending] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
+    getCurrentUser();
     fetchMessages();
     fetchParticipants();
     subscribeToMessages();
@@ -50,6 +52,13 @@ export default function ChatPage() {
     }
 
     setMessages(data);
+  }
+
+  async function getCurrentUser() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    setCurrentUser(user);
   }
 
   async function fetchParticipants() {
@@ -135,14 +144,14 @@ export default function ChatPage() {
           <div
             key={message.id}
             className={`flex ${
-              message.sender_id === supabase.auth.user()?.id
+              message.sender_id === currentUser?.id
                 ? "justify-end"
                 : "justify-start"
             }`}
           >
             <div
               className={`max-w-[70%] p-3 rounded-lg ${
-                message.sender_id === supabase.auth.user()?.id
+                message.sender_id === currentUser?.id
                   ? "bg-blue-500 text-white"
                   : "bg-gray-100"
               }`}
