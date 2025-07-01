@@ -25,6 +25,7 @@ jobs:
         with:
           release-type: node
           package-name: aibos-v5
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           changelog-sections: |
             [
               {"type": "feat", "section": "🚀 Features"},
