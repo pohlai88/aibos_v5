@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
+import { getSupabaseClient } from "@/lib/supabaseClient";
 
 interface Approval {
   id: string;
@@ -57,7 +57,7 @@ export default function ApprovalDetailPage() {
   }, [approvalId]);
 
   async function fetchApproval() {
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from("approvals")
       .select("*")
       .eq("id", approvalId)
@@ -68,11 +68,13 @@ export default function ApprovalDetailPage() {
       return;
     }
 
-    setApproval(data);
+    if (data) {
+      setApproval(data as unknown as Approval);
+    }
   }
 
   async function fetchAssignees() {
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from("approval_assignees")
       .select("*")
       .eq("approval_id", approvalId);
@@ -82,11 +84,13 @@ export default function ApprovalDetailPage() {
       return;
     }
 
-    setAssignees(data);
+    if (data) {
+      setAssignees(data as unknown as ApprovalAssignee[]);
+    }
   }
 
   async function fetchComments() {
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from("comments")
       .select("*")
       .eq("approval_id", approvalId)
@@ -97,11 +101,13 @@ export default function ApprovalDetailPage() {
       return;
     }
 
-    setComments(data);
+    if (data) {
+      setComments(data as unknown as Comment[]);
+    }
   }
 
   async function fetchAttachments() {
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from("attachments")
       .select("*")
       .eq("approval_id", approvalId)
@@ -112,12 +118,14 @@ export default function ApprovalDetailPage() {
       return;
     }
 
-    setAttachments(data);
+    if (data) {
+      setAttachments(data as unknown as Attachment[]);
+    }
   }
 
   function subscribeToChanges() {
     // Subscribe to approval status changes
-    const approvalSubscription = supabase
+    const approvalSubscription = getSupabaseClient()
       .channel("approval_changes")
       .on(
         "postgres_changes",
@@ -134,7 +142,7 @@ export default function ApprovalDetailPage() {
       .subscribe();
 
     // Subscribe to assignee status changes
-    const assigneeSubscription = supabase
+    const assigneeSubscription = getSupabaseClient()
       .channel("assignee_changes")
       .on(
         "postgres_changes",
@@ -151,7 +159,7 @@ export default function ApprovalDetailPage() {
       .subscribe();
 
     // Subscribe to new comments
-    const commentSubscription = supabase
+    const commentSubscription = getSupabaseClient()
       .channel("approval_comments")
       .on(
         "postgres_changes",
@@ -175,10 +183,10 @@ export default function ApprovalDetailPage() {
   }
 
   async function handleApprove() {
-    const user = (await supabase.auth.getUser()).data.user;
+    const user = (await getSupabaseClient().auth.getUser()).data.user;
     if (!user) return;
 
-    const { error } = await supabase
+    const { error } = await getSupabaseClient()
       .from("approval_assignees")
       .update({
         status: "approved",
@@ -193,22 +201,24 @@ export default function ApprovalDetailPage() {
     }
 
     // Add a comment about the approval
-    await supabase.from("comments").insert([
-      {
-        approval_id: approvalId,
-        content: `Approved${approvalComment ? `: ${approvalComment}` : ""}`,
-        author_id: user.id,
-      },
-    ]);
+    await getSupabaseClient()
+      .from("comments")
+      .insert([
+        {
+          approval_id: approvalId,
+          content: `Approved${approvalComment ? `: ${approvalComment}` : ""}`,
+          author_id: user.id,
+        },
+      ]);
 
     setApprovalComment("");
   }
 
   async function handleReject() {
-    const user = (await supabase.auth.getUser()).data.user;
+    const user = (await getSupabaseClient().auth.getUser()).data.user;
     if (!user) return;
 
-    const { error } = await supabase
+    const { error } = await getSupabaseClient()
       .from("approval_assignees")
       .update({
         status: "rejected",
@@ -223,29 +233,33 @@ export default function ApprovalDetailPage() {
     }
 
     // Add a comment about the rejection
-    await supabase.from("comments").insert([
-      {
-        approval_id: approvalId,
-        content: `Rejected${approvalComment ? `: ${approvalComment}` : ""}`,
-        author_id: user.id,
-      },
-    ]);
+    await getSupabaseClient()
+      .from("comments")
+      .insert([
+        {
+          approval_id: approvalId,
+          content: `Rejected${approvalComment ? `: ${approvalComment}` : ""}`,
+          author_id: user.id,
+        },
+      ]);
 
     setApprovalComment("");
   }
 
   async function handleCommentSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const user = (await supabase.auth.getUser()).data.user;
+    const user = (await getSupabaseClient().auth.getUser()).data.user;
     if (!user) return;
 
-    const { error } = await supabase.from("comments").insert([
-      {
-        approval_id: approvalId,
-        content: newComment,
-        author_id: user.id,
-      },
-    ]);
+    const { error } = await getSupabaseClient()
+      .from("comments")
+      .insert([
+        {
+          approval_id: approvalId,
+          content: newComment,
+          author_id: user.id,
+        },
+      ]);
 
     if (error) {
       console.error("Error posting comment:", error);
@@ -261,18 +275,18 @@ export default function ApprovalDetailPage() {
     setUploading(true);
 
     try {
-      const user = (await supabase.auth.getUser()).data.user;
+      const user = (await getSupabaseClient().auth.getUser()).data.user;
       if (!user) throw new Error("Not authenticated");
 
       // Upload file to Supabase Storage
-      const { data: fileData, error: uploadError } = await supabase.storage
-        .from("attachments")
+      const { data: fileData, error: uploadError } = await getSupabaseClient()
+        .storage.from("attachments")
         .upload(`approval-${approvalId}/${file.name}`, file);
 
       if (uploadError) throw uploadError;
 
       // Create attachment record
-      const { error: attachmentError } = await supabase
+      const { error: attachmentError } = await getSupabaseClient()
         .from("attachments")
         .insert([
           {
@@ -423,8 +437,8 @@ export default function ApprovalDetailPage() {
               <span>{attachment.file_name}</span>
               <button
                 onClick={async () => {
-                  const { data } = await supabase.storage
-                    .from("attachments")
+                  const { data } = await getSupabaseClient()
+                    .storage.from("attachments")
                     .createSignedUrl(attachment.file_url, 60);
                   if (data) window.open(data.signedUrl);
                 }}

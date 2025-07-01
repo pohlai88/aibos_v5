@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
+import { getSupabaseClient } from "@/lib/supabaseClient";
 
 interface Document {
   id: string;
@@ -48,7 +48,7 @@ export default function DocumentDetailPage() {
   }, [documentId]);
 
   async function fetchDocument() {
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from("documents")
       .select("*")
       .eq("id", documentId)
@@ -59,13 +59,15 @@ export default function DocumentDetailPage() {
       return;
     }
 
-    setDocument(data);
-    generateDownloadUrl(data.file_url);
+    if (data) {
+      setDocument(data as unknown as Document);
+      generateDownloadUrl((data as unknown as Document).file_url);
+    }
   }
 
   async function generateDownloadUrl(fileUrl: string) {
-    const { data, error } = await supabase.storage
-      .from("attachments")
+    const { data, error } = await getSupabaseClient()
+      .storage.from("attachments")
       .createSignedUrl(fileUrl, 3600); // 1 hour expiry
 
     if (error) {
@@ -77,7 +79,7 @@ export default function DocumentDetailPage() {
   }
 
   async function fetchComments() {
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from("comments")
       .select("*")
       .eq("document_id", documentId)
@@ -88,11 +90,13 @@ export default function DocumentDetailPage() {
       return;
     }
 
-    setComments(data);
+    if (data) {
+      setComments(data as unknown as any[]);
+    }
   }
 
   async function fetchAttachments() {
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from("attachments")
       .select("*")
       .eq("document_id", documentId)
@@ -103,11 +107,13 @@ export default function DocumentDetailPage() {
       return;
     }
 
-    setAttachments(data);
+    if (data) {
+      setAttachments(data as unknown as any[]);
+    }
   }
 
   function subscribeToComments() {
-    const subscription = supabase
+    const subscription = getSupabaseClient()
       .channel("document_comments")
       .on(
         "postgres_changes",
@@ -130,16 +136,18 @@ export default function DocumentDetailPage() {
 
   async function handleCommentSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const user = (await supabase.auth.getUser()).data.user;
+    const user = (await getSupabaseClient().auth.getUser()).data.user;
     if (!user) return;
 
-    const { error } = await supabase.from("comments").insert([
-      {
-        document_id: documentId,
-        content: newComment,
-        author_id: user.id,
-      },
-    ]);
+    const { error } = await getSupabaseClient()
+      .from("comments")
+      .insert([
+        {
+          document_id: documentId,
+          content: newComment,
+          author_id: user.id,
+        },
+      ]);
 
     if (error) {
       console.error("Error posting comment:", error);
@@ -155,18 +163,18 @@ export default function DocumentDetailPage() {
     setUploading(true);
 
     try {
-      const user = (await supabase.auth.getUser()).data.user;
+      const user = (await getSupabaseClient().auth.getUser()).data.user;
       if (!user) throw new Error("Not authenticated");
 
       // Upload file to Supabase Storage
-      const { data: fileData, error: uploadError } = await supabase.storage
-        .from("attachments")
+      const { data: fileData, error: uploadError } = await getSupabaseClient()
+        .storage.from("attachments")
         .upload(`document-${documentId}/${file.name}`, file);
 
       if (uploadError) throw uploadError;
 
       // Create attachment record
-      const { error: attachmentError } = await supabase
+      const { error: attachmentError } = await getSupabaseClient()
         .from("attachments")
         .insert([
           {
@@ -267,8 +275,8 @@ export default function DocumentDetailPage() {
               <span>{attachment.file_name}</span>
               <button
                 onClick={async () => {
-                  const { data } = await supabase.storage
-                    .from("attachments")
+                  const { data } = await getSupabaseClient()
+                    .storage.from("attachments")
                     .createSignedUrl(attachment.file_url, 60);
                   if (data) window.open(data.signedUrl);
                 }}

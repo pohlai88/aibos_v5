@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { getSupabaseClient } from "@/lib/supabaseClient";
 
 interface Notification {
   id: string;
@@ -23,10 +23,10 @@ export default function NotificationsPage() {
   }, []);
 
   async function fetchNotifications() {
-    const user = (await supabase.auth.getUser()).data.user;
+    const user = (await getSupabaseClient().auth.getUser()).data.user;
     if (!user) return;
 
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from("notifications")
       .select("*")
       .eq("user_id", user.id)
@@ -37,12 +37,14 @@ export default function NotificationsPage() {
       return;
     }
 
-    setNotifications(data);
+    if (data) {
+      setNotifications(data as unknown as Notification[]);
+    }
     setLoading(false);
   }
 
   function subscribeToNotifications() {
-    const subscription = supabase
+    const subscription = getSupabaseClient()
       .channel("notifications")
       .on(
         "postgres_changes",
@@ -66,7 +68,7 @@ export default function NotificationsPage() {
   }
 
   async function markAsRead(notificationId: string) {
-    const { error } = await supabase
+    const { error } = await getSupabaseClient()
       .from("notifications")
       .update({ is_read: true })
       .eq("id", notificationId);
@@ -84,10 +86,10 @@ export default function NotificationsPage() {
   }
 
   async function markAllAsRead() {
-    const user = (await supabase.auth.getUser()).data.user;
+    const user = (await getSupabaseClient().auth.getUser()).data.user;
     if (!user) return;
 
-    const { error } = await supabase
+    const { error } = await getSupabaseClient()
       .from("notifications")
       .update({ is_read: true })
       .eq("user_id", user.id)

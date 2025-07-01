@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
+import { getSupabaseClient } from "@/lib/supabaseClient";
 
 interface Task {
   id: string;
@@ -48,7 +48,7 @@ export default function TaskDetailPage() {
   }, [taskId]);
 
   async function fetchTask() {
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from("tasks")
       .select("*")
       .eq("id", taskId)
@@ -59,11 +59,13 @@ export default function TaskDetailPage() {
       return;
     }
 
-    setTask(data);
+    if (data) {
+      setTask(data as unknown as Task);
+    }
   }
 
   async function fetchComments() {
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from("comments")
       .select("*")
       .eq("task_id", taskId)
@@ -74,11 +76,13 @@ export default function TaskDetailPage() {
       return;
     }
 
-    setComments(data);
+    if (data) {
+      setComments(data as unknown as any[]);
+    }
   }
 
   async function fetchAttachments() {
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from("attachments")
       .select("*")
       .eq("task_id", taskId)
@@ -89,11 +93,13 @@ export default function TaskDetailPage() {
       return;
     }
 
-    setAttachments(data);
+    if (data) {
+      setAttachments(data as unknown as any[]);
+    }
   }
 
   function subscribeToComments() {
-    const subscription = supabase
+    const subscription = getSupabaseClient()
       .channel("comments")
       .on(
         "postgres_changes",
@@ -116,16 +122,18 @@ export default function TaskDetailPage() {
 
   async function handleCommentSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const user = (await supabase.auth.getUser()).data.user;
+    const user = (await getSupabaseClient().auth.getUser()).data.user;
     if (!user) return;
 
-    const { error } = await supabase.from("comments").insert([
-      {
-        task_id: taskId,
-        content: newComment,
-        author_id: user.id,
-      },
-    ]);
+    const { error } = await getSupabaseClient()
+      .from("comments")
+      .insert([
+        {
+          task_id: taskId,
+          content: newComment,
+          author_id: user.id,
+        },
+      ]);
 
     if (error) {
       console.error("Error posting comment:", error);
@@ -141,18 +149,18 @@ export default function TaskDetailPage() {
     setUploading(true);
 
     try {
-      const user = (await supabase.auth.getUser()).data.user;
+      const user = (await getSupabaseClient().auth.getUser()).data.user;
       if (!user) throw new Error("Not authenticated");
 
       // Upload file to Supabase Storage
-      const { data: fileData, error: uploadError } = await supabase.storage
-        .from("attachments")
+      const { data: fileData, error: uploadError } = await getSupabaseClient()
+        .storage.from("attachments")
         .upload(`task-${taskId}/${file.name}`, file);
 
       if (uploadError) throw uploadError;
 
       // Create attachment record
-      const { error: attachmentError } = await supabase
+      const { error: attachmentError } = await getSupabaseClient()
         .from("attachments")
         .insert([
           {
@@ -240,8 +248,8 @@ export default function TaskDetailPage() {
               <span>{attachment.file_name}</span>
               <button
                 onClick={async () => {
-                  const { data } = await supabase.storage
-                    .from("attachments")
+                  const { data } = await getSupabaseClient()
+                    .storage.from("attachments")
                     .createSignedUrl(attachment.file_url, 60);
                   if (data) window.open(data.signedUrl);
                 }}

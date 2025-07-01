@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "../../lib/supabaseClient";
+import { getSupabaseClient } from "../../lib/supabaseClient";
 import Link from "next/link";
 
 interface Employee {
@@ -32,7 +32,7 @@ export default function EmployeesPage() {
   const fetchEmployees = async () => {
     try {
       setLoading(true);
-      let query = supabase
+      let query = getSupabaseClient()
         .from("employee_master")
         .select("*")
         .order("created_at", { ascending: false });
@@ -48,7 +48,9 @@ export default function EmployeesPage() {
         return;
       }
 
-      setEmployees(data || []);
+      if (data) {
+        setEmployees(data as unknown as Employee[]);
+      }
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -60,7 +62,7 @@ export default function EmployeesPage() {
     if (!confirm("Are you sure you want to deactivate this employee?")) return;
 
     try {
-      const { error } = await supabase
+      const { error } = await getSupabaseClient()
         .from("employee_master")
         .update({ status: "inactive" })
         .eq("id", id);

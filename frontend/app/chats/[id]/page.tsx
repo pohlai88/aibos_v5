@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
+import { getSupabaseClient } from "@/lib/supabaseClient";
 
 interface Message {
   id: string;
@@ -40,7 +40,7 @@ export default function ChatPage() {
   }, [messages]);
 
   async function fetchMessages() {
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from("messages")
       .select("*")
       .eq("chat_id", chatId)
@@ -51,18 +51,20 @@ export default function ChatPage() {
       return;
     }
 
-    setMessages(data);
+    if (data) {
+      setMessages(data as unknown as Message[]);
+    }
   }
 
   async function getCurrentUser() {
     const {
       data: { user },
-    } = await supabase.auth.getUser();
+    } = await getSupabaseClient().auth.getUser();
     setCurrentUser(user);
   }
 
   async function fetchParticipants() {
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from("chat_participants")
       .select("*")
       .eq("chat_id", chatId);
@@ -72,11 +74,13 @@ export default function ChatPage() {
       return;
     }
 
-    setParticipants(data);
+    if (data) {
+      setParticipants(data as unknown as any[]);
+    }
   }
 
   function subscribeToMessages() {
-    const subscription = supabase
+    const subscription = getSupabaseClient()
       .channel("messages")
       .on(
         "postgres_changes",
@@ -102,16 +106,18 @@ export default function ChatPage() {
     if (!newMessage.trim()) return;
 
     setSending(true);
-    const user = (await supabase.auth.getUser()).data.user;
+    const user = (await getSupabaseClient().auth.getUser()).data.user;
     if (!user) return;
 
-    const { error } = await supabase.from("messages").insert([
-      {
-        chat_id: chatId,
-        content: newMessage,
-        sender_id: user.id,
-      },
-    ]);
+    const { error } = await getSupabaseClient()
+      .from("messages")
+      .insert([
+        {
+          chat_id: chatId,
+          content: newMessage,
+          sender_id: user.id,
+        },
+      ]);
 
     if (error) {
       console.error("Error sending message:", error);

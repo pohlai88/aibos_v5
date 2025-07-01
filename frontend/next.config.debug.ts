@@ -4,7 +4,10 @@ const nextConfig = {
   reactStrictMode: true,
 
   // Enable source maps in development
-  webpack: (config, { dev, isServer }) => {
+  webpack: (
+    config: any,
+    { dev, isServer }: { dev: boolean; isServer: boolean }
+  ) => {
     if (dev) {
       config.devtool = isServer ? "source-map" : "eval-source-map";
     }

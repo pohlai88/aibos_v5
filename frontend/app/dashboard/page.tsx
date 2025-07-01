@@ -1,13 +1,16 @@
 "use client";
+
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { getSupabaseClient } from "@/lib/supabaseClient";
 
 export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
   const [projects, setProjects] = useState<any[]>([]);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data?.user));
+    getSupabaseClient()
+      .auth.getUser()
+      .then(({ data }) => setUser(data?.user));
     // Dummy data for now
     setProjects([
       { id: 1, name: "Project Alpha" },
