@@ -1,9 +1,9 @@
-import React from 'react';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { cn } from "@/shared/utils/cn";
 
 interface LoadingProps {
-  variant?: 'spinner' | 'dots' | 'skeleton';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "spinner" | "dots" | "skeleton";
+  size?: "sm" | "md" | "lg";
   text?: string;
   className?: string;
 }
@@ -14,23 +14,23 @@ interface SkeletonProps {
   width?: string;
 }
 
-export function Loading({ 
-  variant = 'spinner', 
-  size = 'md', 
-  text = 'Loading...',
-  className 
+export function Loading({
+  variant = "spinner",
+  size = "md",
+  text = "Loading...",
+  className,
 }: LoadingProps) {
   const sizes = {
-    sm: 'h-4 w-4',
-    md: 'h-6 w-6',
-    lg: 'h-8 w-8',
+    sm: "h-4 w-4",
+    md: "h-6 w-6",
+    lg: "h-8 w-8",
   };
 
-  if (variant === 'spinner') {
+  if (variant === "spinner") {
     return (
-      <div className={cn('flex items-center justify-center', className)}>
+      <div className={cn("flex items-center justify-center", className)}>
         <svg
-          className={cn('animate-spin text-primary', sizes[size])}
+          className={cn("animate-spin text-primary", sizes[size])}
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -49,18 +49,24 @@ export function Loading({
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
           />
         </svg>
-        {text && <span className="ml-2 text-sm text-muted-foreground">{text}</span>}
+        {text && (
+          <span className="ml-2 text-sm text-muted-foreground">{text}</span>
+        )}
       </div>
     );
   }
 
-  if (variant === 'dots') {
+  if (variant === "dots") {
     return (
-      <div className={cn('flex items-center justify-center space-x-1', className)}>
+      <div
+        className={cn("flex items-center justify-center space-x-1", className)}
+      >
         <div className="h-2 w-2 animate-bounce rounded-full bg-primary [animation-delay:-0.3s]"></div>
         <div className="h-2 w-2 animate-bounce rounded-full bg-primary [animation-delay:-0.15s]"></div>
         <div className="h-2 w-2 animate-bounce rounded-full bg-primary"></div>
-        {text && <span className="ml-2 text-sm text-muted-foreground">{text}</span>}
+        {text && (
+          <span className="ml-2 text-sm text-muted-foreground">{text}</span>
+        )}
       </div>
     );
   }
@@ -68,11 +74,15 @@ export function Loading({
   return null;
 }
 
-export function Skeleton({ className, height = 'h-4', width = 'w-full' }: SkeletonProps) {
+export function Skeleton({
+  className,
+  height = "h-4",
+  width = "w-full",
+}: SkeletonProps) {
   return (
     <div
       className={cn(
-        'animate-pulse rounded-md bg-muted',
+        "animate-pulse rounded-md bg-muted",
         height,
         width,
         className
@@ -106,4 +116,4 @@ export function SkeletonTable({ rows = 5 }: { rows?: number }) {
       ))}
     </div>
   );
-} 
+}

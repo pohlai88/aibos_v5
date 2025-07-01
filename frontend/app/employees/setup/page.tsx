@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { getSupabaseClient } from "../../../lib/supabaseClient";
+import { getSupabaseClient } from "@/lib/supabaseClient";
 import Link from "next/link";
 
 export default function SetupPage() {

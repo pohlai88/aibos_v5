@@ -1,20 +1,25 @@
 /**
  * Module Template for AI-BOS Application
- * 
+ *
  * This template provides a standardized structure for creating new modules.
  * Copy this template and customize it for your specific module needs.
  */
 
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/shared/components/ui/card';
-import { Button } from '@/app/shared/components/ui/button';
-import { Loading, SkeletonCard } from '@/app/shared/components/feedback/loading';
-import { useLocalStorage } from '@/app/shared/hooks/use-local-storage';
-import { formatDate, formatNumber } from '@/app/shared/utils/format';
-import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/app/shared/constants';
-import { getSupabaseClient } from '@/lib/supabaseClient';
+import React, { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
+import { Button } from "@/shared/components/ui/button";
+import { Loading, SkeletonCard } from "@/shared/components/feedback/loading";
+import { useLocalStorage } from "@/shared/hooks/use-local-storage";
+import { formatDate, formatNumber } from "@/shared/utils/format";
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "@/shared/constants";
+import { getSupabaseClient } from "@/lib/supabaseClient";
 
 // Define your module's data types
 interface ModuleItem {
@@ -66,11 +71,14 @@ export default function ModuleNamePage() {
   });
 
   // Local storage for user preferences
-  const [userPreferences, setUserPreferences] = useLocalStorage('module-preferences', {
-    viewMode: 'grid',
-    sortBy: 'created_at',
-    sortOrder: 'desc',
-  });
+  const [userPreferences, setUserPreferences] = useLocalStorage(
+    "module-preferences",
+    {
+      viewMode: "grid",
+      sortBy: "created_at",
+      sortOrder: "desc",
+    }
+  );
 
   // Initialize module
   useEffect(() => {
@@ -89,10 +97,12 @@ export default function ModuleNamePage() {
    */
   async function initializeModule() {
     try {
-      setState(prev => ({ ...prev, loading: true, error: null }));
-      
+      setState((prev) => ({ ...prev, loading: true, error: null }));
+
       // Check authentication
-      const { data: { user } } = await getSupabaseClient().auth.getUser();
+      const {
+        data: { user },
+      } = await getSupabaseClient().auth.getUser();
       if (!user) {
         throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
       }
@@ -100,10 +110,11 @@ export default function ModuleNamePage() {
       // Load initial data
       await loadData();
     } catch (error) {
-      console.error('Module initialization error:', error);
-      setState(prev => ({
+      console.error("Module initialization error:", error);
+      setState((prev) => ({
         ...prev,
-        error: error instanceof Error ? error.message : ERROR_MESSAGES.SERVER_ERROR,
+        error:
+          error instanceof Error ? error.message : ERROR_MESSAGES.SERVER_ERROR,
         loading: false,
       }));
     }
@@ -114,25 +125,25 @@ export default function ModuleNamePage() {
    */
   async function loadData() {
     try {
-      setState(prev => ({ ...prev, loading: true, error: null }));
+      setState((prev) => ({ ...prev, loading: true, error: null }));
 
       // Build query
       let query = getSupabaseClient()
-        .from('your_table_name') // Replace with actual table name
-        .select('*', { count: 'exact' });
+        .from("your_table_name") // Replace with actual table name
+        .select("*", { count: "exact" });
 
       // Apply filters
       if (state.filters.search) {
-        query = query.ilike('title', `%${state.filters.search}%`);
+        query = query.ilike("title", `%${state.filters.search}%`);
       }
       if (state.filters.status) {
-        query = query.eq('status', state.filters.status);
+        query = query.eq("status", state.filters.status);
       }
       if (state.filters.dateFrom) {
-        query = query.gte('created_at', state.filters.dateFrom);
+        query = query.gte("created_at", state.filters.dateFrom);
       }
       if (state.filters.dateTo) {
-        query = query.lte('created_at', state.filters.dateTo);
+        query = query.lte("created_at", state.filters.dateTo);
       }
 
       // Apply pagination
@@ -142,14 +153,14 @@ export default function ModuleNamePage() {
 
       // Apply sorting
       query = query.order(userPreferences.sortBy, {
-        ascending: userPreferences.sortOrder === 'asc',
+        ascending: userPreferences.sortOrder === "asc",
       });
 
       const { data, error, count } = await query;
 
       if (error) throw error;
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         items: data || [],
         pagination: {
@@ -160,10 +171,11 @@ export default function ModuleNamePage() {
         loading: false,
       }));
     } catch (error) {
-      console.error('Error loading data:', error);
-      setState(prev => ({
+      console.error("Error loading data:", error);
+      setState((prev) => ({
         ...prev,
-        error: error instanceof Error ? error.message : ERROR_MESSAGES.SERVER_ERROR,
+        error:
+          error instanceof Error ? error.message : ERROR_MESSAGES.SERVER_ERROR,
         loading: false,
       }));
     }
@@ -175,7 +187,7 @@ export default function ModuleNamePage() {
   async function createItem(itemData: Partial<ModuleItem>) {
     try {
       const { data, error } = await getSupabaseClient()
-        .from('your_table_name') // Replace with actual table name
+        .from("your_table_name") // Replace with actual table name
         .insert([itemData])
         .select()
         .single();
@@ -188,7 +200,7 @@ export default function ModuleNamePage() {
       // Show success message (implement toast notification)
       console.log(SUCCESS_MESSAGES.CREATED);
     } catch (error) {
-      console.error('Error creating item:', error);
+      console.error("Error creating item:", error);
       throw error;
     }
   }
@@ -199,9 +211,9 @@ export default function ModuleNamePage() {
   async function updateItem(id: string, updates: Partial<ModuleItem>) {
     try {
       const { data, error } = await getSupabaseClient()
-        .from('your_table_name') // Replace with actual table name
+        .from("your_table_name") // Replace with actual table name
         .update(updates)
-        .eq('id', id)
+        .eq("id", id)
         .select()
         .single();
 
@@ -213,7 +225,7 @@ export default function ModuleNamePage() {
       // Show success message
       console.log(SUCCESS_MESSAGES.UPDATED);
     } catch (error) {
-      console.error('Error updating item:', error);
+      console.error("Error updating item:", error);
       throw error;
     }
   }
@@ -224,9 +236,9 @@ export default function ModuleNamePage() {
   async function deleteItem(id: string) {
     try {
       const { error } = await getSupabaseClient()
-        .from('your_table_name') // Replace with actual table name
+        .from("your_table_name") // Replace with actual table name
         .delete()
-        .eq('id', id);
+        .eq("id", id);
 
       if (error) throw error;
 
@@ -236,7 +248,7 @@ export default function ModuleNamePage() {
       // Show success message
       console.log(SUCCESS_MESSAGES.DELETED);
     } catch (error) {
-      console.error('Error deleting item:', error);
+      console.error("Error deleting item:", error);
       throw error;
     }
   }
@@ -245,7 +257,7 @@ export default function ModuleNamePage() {
    * Update filters
    */
   function updateFilters(newFilters: Partial<ModuleFilters>) {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       filters: { ...prev.filters, ...newFilters },
       pagination: { ...prev.pagination, page: 1 }, // Reset to first page
@@ -257,7 +269,7 @@ export default function ModuleNamePage() {
    */
   function loadNextPage() {
     if (state.pagination.hasMore) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         pagination: {
           ...prev.pagination,
@@ -305,7 +317,11 @@ export default function ModuleNamePage() {
             Manage your module items efficiently
           </p>
         </div>
-        <Button onClick={() => {/* Open create modal */}}>
+        <Button
+          onClick={() => {
+            /* Open create modal */
+          }}
+        >
           Add New Item
         </Button>
       </div>
@@ -321,12 +337,12 @@ export default function ModuleNamePage() {
               type="text"
               placeholder="Search..."
               className="px-3 py-2 border rounded-md"
-              value={state.filters.search || ''}
+              value={state.filters.search || ""}
               onChange={(e) => updateFilters({ search: e.target.value })}
             />
             <select
               className="px-3 py-2 border rounded-md"
-              value={state.filters.status || ''}
+              value={state.filters.status || ""}
               onChange={(e) => updateFilters({ status: e.target.value })}
             >
               <option value="">All Status</option>
@@ -336,13 +352,13 @@ export default function ModuleNamePage() {
             <input
               type="date"
               className="px-3 py-2 border rounded-md"
-              value={state.filters.dateFrom || ''}
+              value={state.filters.dateFrom || ""}
               onChange={(e) => updateFilters({ dateFrom: e.target.value })}
             />
             <input
               type="date"
               className="px-3 py-2 border rounded-md"
-              value={state.filters.dateTo || ''}
+              value={state.filters.dateTo || ""}
               onChange={(e) => updateFilters({ dateTo: e.target.value })}
             />
           </div>
@@ -363,10 +379,20 @@ export default function ModuleNamePage() {
                 <span>{formatDate(item.created_at)}</span>
               </div>
               <div className="flex gap-2 mt-4">
-                <Button variant="outline" size="sm" onClick={() => {/* Edit item */}}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    /* Edit item */
+                  }}
+                >
                   Edit
                 </Button>
-                <Button variant="destructive" size="sm" onClick={() => deleteItem(item.id)}>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => deleteItem(item.id)}
+                >
                   Delete
                 </Button>
               </div>
@@ -383,7 +409,7 @@ export default function ModuleNamePage() {
             disabled={state.loading}
             variant="outline"
           >
-            {state.loading ? <Loading size="sm" /> : 'Load More'}
+            {state.loading ? <Loading size="sm" /> : "Load More"}
           </Button>
         </div>
       )}
@@ -395,7 +421,11 @@ export default function ModuleNamePage() {
           <div className="text-gray-400 mb-4">
             Try adjusting your filters or create a new item
           </div>
-          <Button onClick={() => {/* Open create modal */}}>
+          <Button
+            onClick={() => {
+              /* Open create modal */
+            }}
+          >
             Create First Item
           </Button>
         </div>
@@ -406,7 +436,7 @@ export default function ModuleNamePage() {
 
 /**
  * Usage Instructions:
- * 
+ *
  * 1. Copy this template to your module directory
  * 2. Replace 'ModuleName' with your actual module name
  * 3. Replace 'your_table_name' with your actual Supabase table name
@@ -417,4 +447,4 @@ export default function ModuleNamePage() {
  * 8. Add proper error handling and validation
  * 9. Implement real-time updates if needed
  * 10. Add proper TypeScript types for all functions
- */ 
+ */

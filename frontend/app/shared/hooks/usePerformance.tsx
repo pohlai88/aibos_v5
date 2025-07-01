@@ -1,11 +1,11 @@
 /**
  * Performance Monitoring Hook for AI-BOS Application
- * 
+ *
  * Comprehensive performance tracking with metrics collection,
  * performance budgets, and real-time monitoring capabilities.
  */
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from "react";
 
 // Performance metrics interface
 export interface PerformanceMetrics {
@@ -15,18 +15,18 @@ export interface PerformanceMetrics {
   cls?: number; // Cumulative Layout Shift
   ttfb?: number; // Time to First Byte
   fcp?: number; // First Contentful Paint
-  
+
   // Custom metrics
   moduleLoadTime?: number;
   apiResponseTime?: number;
   renderTime?: number;
   memoryUsage?: number;
-  
+
   // User interaction metrics
   clickToResponse?: number;
   formSubmissionTime?: number;
   navigationTime?: number;
-  
+
   // Error tracking
   errors: string[];
   warnings: string[];
@@ -53,7 +53,7 @@ const DEFAULT_BUDGET: PerformanceBudget = {
   fcp: 1800,
   moduleLoadTime: 1000,
   apiResponseTime: 500,
-  renderTime: 100
+  renderTime: 100,
 };
 
 // Performance monitoring options
@@ -76,18 +76,18 @@ export const usePerformanceTracking = (
     budget = DEFAULT_BUDGET,
     enableRealTime = true,
     enableReporting = true,
-    reportEndpoint = '/api/performance',
-    sampleRate = 1.0
+    reportEndpoint = "/api/performance",
+    sampleRate = 1.0,
   } = options;
 
   const [metrics, setMetrics] = useState<PerformanceMetrics>({
     errors: [],
-    warnings: []
+    warnings: [],
   });
-  
+
   const [isMonitoring, setIsMonitoring] = useState(false);
   const [violations, setViolations] = useState<string[]>([]);
-  
+
   const startTime = useRef<number>(Date.now());
   const moduleLoadStart = useRef<number>(performance.now());
   const observerRef = useRef<PerformanceObserver | null>(null);
@@ -100,87 +100,92 @@ export const usePerformanceTracking = (
     if (!enableRealTime || Math.random() > sampleRate) return;
 
     setIsMonitoring(true);
-    
+
     // Track module load time
     const moduleLoadEnd = performance.now();
     const loadTime = moduleLoadEnd - moduleLoadStart.current;
-    
-    setMetrics(prev => ({
+
+    setMetrics((prev) => ({
       ...prev,
-      moduleLoadTime: loadTime
+      moduleLoadTime: loadTime,
     }));
 
     // Track Core Web Vitals if supported
-    if ('PerformanceObserver' in window) {
+    if ("PerformanceObserver" in window) {
       try {
         // Observe LCP
-        if ('LargestContentfulPaint' in window) {
+        if ("LargestContentfulPaint" in window) {
           observerRef.current = new PerformanceObserver((list) => {
             const entries = list.getEntries();
             const lastEntry = entries[entries.length - 1] as any;
             if (lastEntry) {
-              setMetrics(prev => ({
+              setMetrics((prev) => ({
                 ...prev,
-                lcp: lastEntry.startTime
+                lcp: lastEntry.startTime,
               }));
             }
           });
-          observerRef.current.observe({ entryTypes: ['largest-contentful-paint'] });
+          observerRef.current.observe({
+            entryTypes: ["largest-contentful-paint"],
+          });
         }
 
         // Observe FID
-        if ('FirstInputDelay' in window) {
+        if ("FirstInputDelay" in window) {
           observerRef.current = new PerformanceObserver((list) => {
             const entries = list.getEntries();
             const firstEntry = entries[0] as any;
             if (firstEntry) {
-              setMetrics(prev => ({
+              setMetrics((prev) => ({
                 ...prev,
-                fid: firstEntry.processingStart - firstEntry.startTime
+                fid: firstEntry.processingStart - firstEntry.startTime,
               }));
             }
           });
-          observerRef.current.observe({ entryTypes: ['first-input'] });
+          observerRef.current.observe({ entryTypes: ["first-input"] });
         }
 
         // Observe CLS
-        if ('LayoutShift' in window) {
+        if ("LayoutShift" in window) {
           let clsValue = 0;
           observerRef.current = new PerformanceObserver((list) => {
             const entries = list.getEntries() as any[];
-            entries.forEach(entry => {
+            entries.forEach((entry) => {
               if (!entry.hadRecentInput) {
                 clsValue += entry.value;
               }
             });
-            setMetrics(prev => ({
+            setMetrics((prev) => ({
               ...prev,
-              cls: clsValue
+              cls: clsValue,
             }));
           });
-          observerRef.current.observe({ entryTypes: ['layout-shift'] });
+          observerRef.current.observe({ entryTypes: ["layout-shift"] });
         }
       } catch (error) {
-        console.warn('Performance monitoring initialization failed:', error);
+        console.warn("Performance monitoring initialization failed:", error);
       }
     }
 
     // Track memory usage if available
-    if ('memory' in performance) {
+    if ("memory" in performance) {
       const memory = (performance as any).memory;
-      setMetrics(prev => ({
+      setMetrics((prev) => ({
         ...prev,
-        memoryUsage: memory.usedJSHeapSize / 1024 / 1024 // Convert to MB
+        memoryUsage: memory.usedJSHeapSize / 1024 / 1024, // Convert to MB
       }));
     }
 
     // Track TTFB and FCP
-    const navigationEntry = performance.getEntriesByType('navigation')[0] as any;
+    const navigationEntry = performance.getEntriesByType(
+      "navigation"
+    )[0] as any;
     if (navigationEntry) {
-      setMetrics(prev => ({
+      setMetrics((prev) => ({
         ...prev,
         ttfb: navigationEntry.responseStart - navigationEntry.requestStart,
-        fcp: navigationEntry.domContentLoadedEventEnd - navigationEntry.fetchStart
+        fcp:
+          navigationEntry.domContentLoadedEventEnd - navigationEntry.fetchStart,
       }));
     }
   }, [enableRealTime, sampleRate]);
@@ -188,68 +193,71 @@ export const usePerformanceTracking = (
   /**
    * Track API response time
    */
-  const trackApiCall = useCallback(async <T>(
-    apiCall: () => Promise<T>,
-    endpoint: string
-  ): Promise<T> => {
-    const start = performance.now();
-    try {
-      const result = await apiCall();
-      const end = performance.now();
-      const responseTime = end - start;
-      
-      setMetrics(prev => ({
-        ...prev,
-        apiResponseTime: responseTime
-      }));
+  const trackApiCall = useCallback(
+    async <T,>(apiCall: () => Promise<T>, endpoint: string): Promise<T> => {
+      const start = performance.now();
+      try {
+        const result = await apiCall();
+        const end = performance.now();
+        const responseTime = end - start;
 
-      if (responseTime > budget.apiResponseTime!) {
-        const violation = `API response time (${responseTime}ms) exceeded budget (${budget.apiResponseTime}ms) for ${endpoint}`;
-        setViolations(prev => [...prev, violation]);
-        setMetrics(prev => ({
+        setMetrics((prev) => ({
           ...prev,
-          warnings: [...prev.warnings, violation]
+          apiResponseTime: responseTime,
         }));
-      }
 
-      return result;
-    } catch (error) {
-      const end = performance.now();
-      const responseTime = end - start;
-      
-      setMetrics(prev => ({
-        ...prev,
-        apiResponseTime: responseTime,
-        errors: [...prev.errors, `API call failed: ${error}`]
-      }));
-      
-      throw error;
-    }
-  }, [budget.apiResponseTime]);
+        if (responseTime > budget.apiResponseTime!) {
+          const violation = `API response time (${responseTime}ms) exceeded budget (${budget.apiResponseTime}ms) for ${endpoint}`;
+          setViolations((prev) => [...prev, violation]);
+          setMetrics((prev) => ({
+            ...prev,
+            warnings: [...prev.warnings, violation],
+          }));
+        }
+
+        return result;
+      } catch (error) {
+        const end = performance.now();
+        const responseTime = end - start;
+
+        setMetrics((prev) => ({
+          ...prev,
+          apiResponseTime: responseTime,
+          errors: [...prev.errors, `API call failed: ${error}`],
+        }));
+
+        throw error;
+      }
+    },
+    [budget.apiResponseTime]
+  );
 
   /**
    * Track render performance
    */
-  const trackRender = useCallback((componentName: string) => {
-    return () => {
-      const end = performance.now();
-      const renderTime = end - moduleLoadStart.current;
-      
-      setMetrics(prev => ({
-        ...prev,
-        renderTime
-      }));
+  const trackRender = useCallback(
+    (componentName: string) => {
+      return () => {
+        const end = performance.now();
+        const renderTime = end - moduleLoadStart.current;
 
-      if (renderTime > budget.renderTime!) {
-        const violation = `Render time (${renderTime}ms) exceeded budget (${budget.renderTime}ms) for ${componentName}`;
-        setViolations(prev => [...prev, violation]);
-        setMetrics(prev => ({
+        setMetrics((prev) => ({
           ...prev,
-          warnings: [...prev.warnings, violation]
+          renderTime,
         }));
-      }
-    };
-  }, [budget.renderTime]);
+
+        if (renderTime > budget.renderTime!) {
+          const violation = `Render time (${renderTime}ms) exceeded budget (${budget.renderTime}ms) for ${componentName}`;
+          setViolations((prev) => [...prev, violation]);
+          setMetrics((prev) => ({
+            ...prev,
+            warnings: [...prev.warnings, violation],
+          }));
+        }
+      };
+    },
+    [budget.renderTime]
+  );
 
   /**
    * Track user interaction
@@ -259,10 +267,10 @@ export const usePerformanceTracking = (
     return () => {
       const end = performance.now();
       const duration = end - start;
-      
-      setMetrics(prev => ({
+
+      setMetrics((prev) => ({
         ...prev,
-        clickToResponse: duration
+        clickToResponse: duration,
       }));
     };
   }, []);
@@ -270,34 +278,35 @@ export const usePerformanceTracking = (
   /**
    * Track form submission
    */
-  const trackFormSubmission = useCallback(async <T>(
-    formSubmit: () => Promise<T>
-  ): Promise<T> => {
-    const start = performance.now();
-    try {
-      const result = await formSubmit();
-      const end = performance.now();
-      const submissionTime = end - start;
-      
-      setMetrics(prev => ({
-        ...prev,
-        formSubmissionTime: submissionTime
-      }));
+  const trackFormSubmission = useCallback(
+    async <T,>(formSubmit: () => Promise<T>): Promise<T> => {
+      const start = performance.now();
+      try {
+        const result = await formSubmit();
+        const end = performance.now();
+        const submissionTime = end - start;
 
-      return result;
-    } catch (error) {
-      const end = performance.now();
-      const submissionTime = end - start;
-      
-      setMetrics(prev => ({
-        ...prev,
-        formSubmissionTime: submissionTime,
-        errors: [...prev.errors, `Form submission failed: ${error}`]
-      }));
-      
-      throw error;
-    }
-  }, []);
+        setMetrics((prev) => ({
+          ...prev,
+          formSubmissionTime: submissionTime,
+        }));
+
+        return result;
+      } catch (error) {
+        const end = performance.now();
+        const submissionTime = end - start;
+
+        setMetrics((prev) => ({
+          ...prev,
+          formSubmissionTime: submissionTime,
+          errors: [...prev.errors, `Form submission failed: ${error}`],
+        }));
+
+        throw error;
+      }
+    },
+    []
+  );
 
   /**
    * Track navigation
@@ -307,10 +316,10 @@ export const usePerformanceTracking = (
     return () => {
       const end = performance.now();
       const navigationTime = end - start;
-      
-      setMetrics(prev => ({
+
+      setMetrics((prev) => ({
         ...prev,
-        navigationTime
+        navigationTime,
       }));
     };
   }, []);
@@ -324,27 +333,34 @@ export const usePerformanceTracking = (
     const reportData = {
       moduleName,
       timestamp: new Date().toISOString(),
-      sessionId: sessionStorage.getItem('sessionId') || 'unknown',
+      sessionId: sessionStorage.getItem("sessionId") || "unknown",
       userAgent: navigator.userAgent,
       metrics,
       violations,
-      budget
+      budget,
     };
 
     try {
       await fetch(reportEndpoint, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(reportData)
+        body: JSON.stringify(reportData),
       });
     } catch (error) {
-      console.warn('Failed to report performance data:', error);
+      console.warn("Failed to report performance data:", error);
       // Queue for retry
       reportQueue.current.push(metrics);
     }
-  }, [moduleName, metrics, violations, budget, enableReporting, reportEndpoint]);
+  }, [
+    moduleName,
+    metrics,
+    violations,
+    budget,
+    enableReporting,
+    reportEndpoint,
+  ]);
 
   /**
    * Get performance summary
@@ -361,14 +377,14 @@ export const usePerformanceTracking = (
         fid: metrics.fid,
         cls: metrics.cls,
         ttfb: metrics.ttfb,
-        fcp: metrics.fcp
+        fcp: metrics.fcp,
       },
       customMetrics: {
         moduleLoadTime: metrics.moduleLoadTime,
         apiResponseTime: metrics.apiResponseTime,
         renderTime: metrics.renderTime,
-        memoryUsage: metrics.memoryUsage
-      }
+        memoryUsage: metrics.memoryUsage,
+      },
     };
 
     return summary;
@@ -384,14 +400,19 @@ export const usePerformanceTracking = (
       cls: !metrics.cls || metrics.cls <= budget.cls,
       ttfb: !metrics.ttfb || metrics.ttfb <= budget.ttfb,
       fcp: !metrics.fcp || metrics.fcp <= budget.fcp,
-      moduleLoadTime: !metrics.moduleLoadTime || metrics.moduleLoadTime <= budget.moduleLoadTime,
-      apiResponseTime: !metrics.apiResponseTime || metrics.apiResponseTime <= budget.apiResponseTime,
-      renderTime: !metrics.renderTime || metrics.renderTime <= budget.renderTime
+      moduleLoadTime:
+        !metrics.moduleLoadTime ||
+        metrics.moduleLoadTime <= budget.moduleLoadTime,
+      apiResponseTime:
+        !metrics.apiResponseTime ||
+        metrics.apiResponseTime <= budget.apiResponseTime,
+      renderTime:
+        !metrics.renderTime || metrics.renderTime <= budget.renderTime,
     };
 
     return {
       ...compliance,
-      overall: Object.values(compliance).every(Boolean)
+      overall: Object.values(compliance).every(Boolean),
     };
   }, [metrics, budget]);
 
@@ -408,7 +429,7 @@ export const usePerformanceTracking = (
   // Initialize monitoring on mount
   useEffect(() => {
     initializeMonitoring();
-    
+
     // Report performance data on unmount
     return () => {
       if (enableReporting) {
@@ -428,19 +449,19 @@ export const usePerformanceTracking = (
         reportQueue.current.forEach(async (queuedMetrics) => {
           try {
             await fetch(reportEndpoint, {
-              method: 'POST',
+              method: "POST",
               headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
               },
               body: JSON.stringify({
                 moduleName,
                 timestamp: new Date().toISOString(),
                 metrics: queuedMetrics,
-                retry: true
-              })
+                retry: true,
+              }),
             });
           } catch (error) {
-            console.warn('Failed to retry performance report:', error);
+            console.warn("Failed to retry performance report:", error);
           }
         });
         reportQueue.current = [];
@@ -455,24 +476,24 @@ export const usePerformanceTracking = (
     metrics,
     isMonitoring,
     violations,
-    
+
     // Tracking methods
     trackApiCall,
     trackRender,
     trackInteraction,
     trackFormSubmission,
     trackNavigation,
-    
+
     // Analysis methods
     getPerformanceSummary,
     checkBudgetCompliance,
-    
+
     // Control methods
     reportPerformance,
     cleanup,
-    
+
     // Budget configuration
-    budget
+    budget,
   };
 };
 
@@ -486,13 +507,8 @@ export const withPerformanceTracking = <P extends object>(
 ) => {
   return (props: P) => {
     const performance = usePerformanceTracking(moduleName, options);
-    
-    return (
-      <Component
-        {...props}
-        performance={performance}
-      />
-    );
+
+    return <Component {...props} performance={performance} />;
   };
 };
 
@@ -500,35 +516,43 @@ export const withPerformanceTracking = <P extends object>(
  * Performance monitoring context
  */
 export const usePerformanceContext = () => {
-  const [globalMetrics, setGlobalMetrics] = useState<Record<string, PerformanceMetrics>>({});
-  
-  const addModuleMetrics = useCallback((moduleName: string, metrics: PerformanceMetrics) => {
-    setGlobalMetrics(prev => ({
-      ...prev,
-      [moduleName]: metrics
-    }));
-  }, []);
-  
+  const [globalMetrics, setGlobalMetrics] = useState<
+    Record<string, PerformanceMetrics>
+  >({});
+
+  const addModuleMetrics = useCallback(
+    (moduleName: string, metrics: PerformanceMetrics) => {
+      setGlobalMetrics((prev) => ({
+        ...prev,
+        [moduleName]: metrics,
+      }));
+    },
+    []
+  );
+
   const getGlobalSummary = useCallback(() => {
     const modules = Object.keys(globalMetrics);
-    const totalViolations = modules.reduce((sum, module) => 
-      sum + (globalMetrics[module].errors?.length || 0), 0
+    const totalViolations = modules.reduce(
+      (sum, module) => sum + (globalMetrics[module].errors?.length || 0),
+      0
     );
-    
+
     return {
       modules,
       totalViolations,
-      averageLoadTime: modules.reduce((sum, module) => 
-        sum + (globalMetrics[module].moduleLoadTime || 0), 0
-      ) / modules.length
+      averageLoadTime:
+        modules.reduce(
+          (sum, module) => sum + (globalMetrics[module].moduleLoadTime || 0),
+          0
+        ) / modules.length,
     };
   }, [globalMetrics]);
-  
+
   return {
     globalMetrics,
     addModuleMetrics,
-    getGlobalSummary
+    getGlobalSummary,
   };
 };
 
-export default usePerformanceTracking; 
+export default usePerformanceTracking;
