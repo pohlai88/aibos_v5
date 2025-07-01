@@ -1,0 +1,24 @@
+{
+  "recommendations": [
+    "ms-vscode.vscode-typescript-next",
+    "bradlc.vscode-tailwindcss",
+    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-eslint",
+    "ms-vscode.debugger-for-chrome",
+    "ms-playwright.playwright",
+    "cypressteam.cypress-helper",
+    "ms-vscode.vscode-json",
+    "ritwickdey.liveserver",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.path-intellisense",
+    "ms-vscode.powershell",
+    "ms-vscode-remote.remote-containers",
+    "ms-vsliveshare.vsliveshare",
+    "gruntfuggly.todo-tree",
+    "streetsidesoftware.code-spell-checker",
+    "usernamehw.errorlens",
+    "oderwat.indent-rainbow",
+    "pkief.material-icon-theme",
+    "ms-vscode.sublime-keybindings"
+  ]
+}
