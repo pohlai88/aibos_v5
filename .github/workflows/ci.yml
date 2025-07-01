@@ -18,22 +18,33 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install dependencies
+      - name: Install root dependencies
         run: npm install
 
-      - name: Run lint (if available)
-        run: |
-          if npm run | grep -q "lint"; then
-            npm run lint
-          else
-            echo "No lint script found, skipping lint."
-          fi
+      - name: Fix tailwindcss permissions
+        run: chmod +x node_modules/.bin/tailwindcss
 
-      - name: Build Tailwind CSS
+      - name: Build static site (Tailwind CSS)
         run: npm run build
 
-      - name: Upload public directory
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm install
+
+      - name: Build frontend (Next.js)
+        run: |
+          cd frontend
+          npm run build
+
+      - name: Upload static site artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: public
+          name: static-site
           path: public/
+
+      - name: Upload frontend artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/.next/
