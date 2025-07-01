@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Debug Test - AIBOS v5</title>
+    <link href="tailwind.css" rel="stylesheet" />
+    <script src="utils/debug.js"></script>
+  </head>
+  <body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-3xl font-bold mb-6">Debug Test Page</h1>
+
+      <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+        <h2 class="text-xl font-semibold mb-4">Debug Controls</h2>
+        <div class="space-x-4">
+          <button
+            onclick="debugToggle()"
+            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Toggle Debug Mode
+          </button>
+          <button
+            onclick="testDebugFeatures()"
+            class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+          >
+            Test Debug Features
+          </button>
+          <button
+            onclick="testSupabaseDebug()"
+            class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+          >
+            Test Supabase Debug
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+        <h2 class="text-xl font-semibold mb-4">Debug Output</h2>
+        <div
+          id="debugOutput"
+          class="bg-gray-100 p-4 rounded font-mono text-sm min-h-32"
+        >
+          Open browser console to see debug output...
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-xl font-semibold mb-4">Current Debug Status</h2>
+        <div id="debugStatus" class="space-y-2">
+          <p>
+            <strong>Debug Mode:</strong>
+            <span id="debugModeStatus">Checking...</span>
+          </p>
+          <p>
+            <strong>Local Storage:</strong>
+            <span id="localStorageStatus">Checking...</span>
+          </p>
+          <p>
+            <strong>URL Parameter:</strong>
+            <span id="urlParamStatus">Checking...</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Update debug status display
+      function updateDebugStatus() {
+        const debugMode =
+          localStorage.getItem("debug") === "true" ||
+          new URLSearchParams(window.location.search).has("debug");
+
+        document.getElementById("debugModeStatus").textContent = debugMode
+          ? "Enabled"
+          : "Disabled";
+        document.getElementById("localStorageStatus").textContent =
+          localStorage.getItem("debug") || "Not set";
+        document.getElementById("urlParamStatus").textContent =
+          new URLSearchParams(window.location.search).has("debug")
+            ? "true"
+            : "false";
+      }
+
+      // Test debug features
+      function testDebugFeatures() {
+        DebugUtil.log("Testing basic logging");
+        DebugUtil.warn("Testing warning logging");
+        DebugUtil.error("Testing error logging");
+
+        DebugUtil.inspect({ test: true, data: [1, 2, 3] }, "Test Object");
+
+        DebugUtil.table(
+          [
+            { name: "John", age: 30 },
+            { name: "Jane", age: 25 },
+          ],
+          "Test Table"
+        );
+
+        DebugUtil.group("Test Group", () => {
+          DebugUtil.log("Message inside group");
+          DebugUtil.time("Test Timer");
+          setTimeout(() => {
+            DebugUtil.timeEnd("Test Timer");
+          }, 100);
+        });
+
+        // Test fetch debugging
+        fetch("https://jsonplaceholder.typicode.com/posts/1")
+          .then((response) => response.json())
+          .then((data) => DebugUtil.log("Fetch test successful:", data))
+          .catch((error) => DebugUtil.error("Fetch test failed:", error));
+      }
+
+      // Test Supabase debug (mock)
+      function testSupabaseDebug() {
+        // Mock Supabase client for testing
+        window.supabase = {
+          from: function (table) {
+            return {
+              select: function (...args) {
+                DebugUtil.log(`Mock Supabase SELECT from ${table}:`, args);
+                return this;
+              },
+              insert: function (data) {
+                DebugUtil.log(`Mock Supabase INSERT into ${table}:`, data);
+                return this;
+              },
+              update: function (data) {
+                DebugUtil.log(`Mock Supabase UPDATE in ${table}:`, data);
+                return this;
+              },
+              delete: function () {
+                DebugUtil.log(`Mock Supabase DELETE from ${table}`);
+                return this;
+              },
+            };
+          },
+        };
+
+        // Re-initialize debug to enable Supabase debugging
+        DebugUtil.supabaseDebug();
+
+        // Test the mock operations
+        window.supabase.from("users").select("*");
+        window.supabase.from("users").insert({ name: "Test User" });
+        window.supabase.from("users").update({ name: "Updated User" });
+        window.supabase.from("users").delete();
+      }
+
+      // Initialize page
+      document.addEventListener("DOMContentLoaded", () => {
+        updateDebugStatus();
+
+        // Update status every second
+        setInterval(updateDebugStatus, 1000);
+
+        // Test initial debug
+        DebugUtil.log("Debug test page loaded");
+
+        if (DebugUtil.isDebugMode) {
+          document.getElementById("debugOutput").innerHTML =
+            '<span class="text-green-600">Debug mode is active! Check browser console for detailed output.</span>';
+        } else {
+          document.getElementById("debugOutput").innerHTML =
+            '<span class="text-orange-600">Debug mode is disabled. Enable it to see debug output.</span>';
+        }
+      });
+    </script>
+  </body>
+</html>
